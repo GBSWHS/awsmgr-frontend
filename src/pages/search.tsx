@@ -6,9 +6,10 @@ import Button from "../components/Button";
 import updateModalReducer from "../modules/ModalReducer";
 import UpdateModal from "../components/updateModal";
 import { Body, Title, Top } from "../styles/globals";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
-export default function Instances() {
+export default function Search() {
+  const { search } = useParams<{ search: string }>();
   const location = useLocation()
   const serachParams = new URLSearchParams(location.search);
   const [uuid, setUuid] = useState('');
@@ -28,7 +29,7 @@ export default function Instances() {
   })
 
   useEffect(() => {
-    axios(`/api/instances?take=10&skip=${parseInt(String(serachParams.get('page') ? String(serachParams.get('page')) : "0")) * 10}`, {
+    axios(`/api/instances/search?take=10&skip=${parseInt(String(serachParams.get('page') ? String(serachParams.get('page')) : "0")) * 10}&query=${search}`, {
       method: 'GET',
       headers: {
         "Content-Type": "application/json"

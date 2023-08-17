@@ -15,7 +15,7 @@ export default function Login() {
       data: {
         password
       }
-    }).then(() => window.location.href = "/instances")
+    }).then(() => window.location.href = "/instances?page=0")
       .catch(() => alert("비밀번호가 일치하지 않습니다."))
 
     setFetched(false);

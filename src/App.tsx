@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import axios from "axios";
 import useSWR from 'swr'
 import Invites from "./pages/invites";
+import Search from "./pages/search";
 
 async function fetcher(path: string) {
   await axios(path, {
@@ -12,7 +13,7 @@ async function fetcher(path: string) {
   }).then((res) => {
     if (res.status === 200) {
       if (window.location.pathname === "/login" || window.location.pathname === "/") {
-        window.location.href = "/instances"
+        window.location.href = "/instances?page=0"
       }
     }
   }).catch((err) => {
@@ -27,7 +28,7 @@ async function fetcher(path: string) {
 }
 
 export default function App() {
-  const { data, isLoading, error } = useSWR('/api/auth/status', fetcher)
+  const { isLoading, error } = useSWR('/api/auth/status', fetcher)
 
   if (window.location.pathname !== "/login" && (isLoading || error))
     return (
@@ -51,6 +52,7 @@ export default function App() {
             <>
               <Route path='/login' element={<Login />} />
               <Route path='/instances' element={<Instances />}></Route>
+              <Route path="/instances/search/:search" element={<Search />}></Route>
               <Route path='/invites/:uuid' element={<Invites />}></Route>
             </>
           }

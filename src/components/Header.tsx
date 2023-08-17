@@ -1,7 +1,8 @@
+import { useState } from "react"
 import { styled } from "styled-components"
 
 export default function Header() {
-  console.log()
+  const [search, setSearch] = useState('')
   return (
     <>
       {window.location.pathname === "/login" ? <></>
@@ -18,7 +19,7 @@ export default function Header() {
                   </svg>
                 </a>
               </LogoBody>
-              {window.location.pathname === "/instances" ?
+              {window.location.pathname.includes("/instances") ?
                 <SearchBody>
                   <div>
                     <InputBody>
@@ -29,7 +30,9 @@ export default function Header() {
                         </svg>
                       </label>
                       <div>
-                        <input type="text" autoComplete="off" spellCheck="false" aria-haspopup="dialog" id="search" placeholder="검색" role="combobox" />
+                        <form action={`/instances/search/${search}?page=0`}>
+                          <input type="text" autoComplete="off" spellCheck="false" aria-haspopup="dialog" id="search" placeholder="검색" role="combobox" onChange={(e) => setSearch(e.target.value)} />
+                        </form>
                       </div>
                     </InputBody>
                   </div>
@@ -161,7 +164,7 @@ const InputBody = styled.div`
     position: relative !important;
     height: 100%;
 
-    > input#search {
+    input#search {
       color: rgb(255, 255, 255) !important;
       width: 100% !important;
       height: 30px !important;
