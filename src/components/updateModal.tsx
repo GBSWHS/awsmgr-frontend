@@ -51,7 +51,7 @@ export default function UpdateModal(props: { display: boolean, booleanAction: Re
         ports: props.instance.ports.map(item => item.value).sort().join(','),
         memo: props.instance.memo
       }
-    }).then((res) => {
+    }).then(() => {
       alert("인스턴스가 성공적으로 수정되었습니다.")
       window.location.reload();
     }).catch((err) => console.error(err))
