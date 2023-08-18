@@ -229,7 +229,7 @@ export default function Instances() {
 
 const TableMain = styled.div`
   width: 100%;
-  height: 100%;
+  height: calc(100% - 45px);
   border: 1px solid black;
   overflow: auto;
   scroll-snap-type: both mandatory;
@@ -262,6 +262,4 @@ const TableMain = styled.div`
     overflow: auto;
     width: auto;
   }
-
-  padding-bottom: 50px;
 `

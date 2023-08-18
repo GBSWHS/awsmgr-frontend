@@ -21,6 +21,10 @@ export const GlobalStyles = createGlobalStyle`
     font-family: 'Noto Sans', sans-serif;
   }
 
+  #root {
+    height: 100%;
+  }
+
   a {
     color: inherit;
     text-decoration: none;
@@ -37,7 +41,7 @@ export const GlobalStyles = createGlobalStyle`
 
 export const Body = styled.div`
   width: 100%;
-  height: 100%;
+  height: calc(100% - 40px);
   padding: 10px;
 `
 
