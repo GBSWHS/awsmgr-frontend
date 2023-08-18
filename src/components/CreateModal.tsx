@@ -42,11 +42,13 @@ const CreateModal: FC<Props> = (props) => {
   }, [])
 
   function portEnter(e: any): void {
-    if (e.keyCode === 13) {
-      const exists = event.ports.some((item: any) => item.value === event.port) as boolean
+    if (e.keyCode === 13 || e.keyCode === 32) {
+      const exists = event.ports.some((item: any) => item.value === event.port.replace(/\D/g, '')) as boolean
       if (!exists) {
         dispatch({ type: 'setPort', port: '' })
-        dispatch({ type: 'addPort', port: event.port })
+        dispatch({
+          type: 'addPort', port: event.port.replace(/\D/g, '')
+        })
       }
     }
   }
