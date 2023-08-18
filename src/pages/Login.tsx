@@ -32,7 +32,7 @@ export default function Login() {
             <Header>
               <h2>
                 로그인<br />
-                <small>AWSMGR is not associated with Amazon Web Service.</small>
+                <small>awsmgr is not associated with Amazon Web Service.</small>
               </h2>
             </Header>
             <Content>
@@ -152,7 +152,7 @@ const Header = styled.div`
     small {
       font-weight: 500;
       line-height: 0;
-      font-size: 2px;
+      font-size: 12px;
     }
   }
 `
@@ -229,6 +229,10 @@ const Field = styled.div`
   > input:focus {
     outline: 1px solid #0073bb;
   }
+
+  > input:disabled {
+    background: #eee;
+  }
 `
 
 const Footer = styled.div`
@@ -241,9 +245,5 @@ const Footer = styled.div`
     text-decoration: none;
     font-weight: 700;
     line-height: .75rem;
-  }
-
-  a:hover {
-    font-weight: 900;
   }
 ` 
