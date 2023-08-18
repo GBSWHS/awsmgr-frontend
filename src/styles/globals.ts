@@ -9,7 +9,6 @@ export const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
     padding: 0;
     margin: 0;
-    font-family: 'Noto Sans', sans-serif;
     font-weight: 400;
   }
 
@@ -19,6 +18,7 @@ export const GlobalStyles = createGlobalStyle`
     width: 100vw;
     height: 100vh;
     font-size: 1.4rem;
+    font-family: 'Noto Sans', sans-serif;
   }
 
   a {

@@ -32,7 +32,7 @@ export default function Login() {
             <Header>
               <h2>
                 로그인<br />
-                <small>AWS-MGR is not associated with Amazon Web Service.</small>
+                <small>AWSMGR is not associated with Amazon Web Service.</small>
               </h2>
             </Header>
             <Content>
