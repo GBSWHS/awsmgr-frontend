@@ -149,21 +149,24 @@ export default function Search() {
 
       <TableMain>
         <table>
+          <thead>
+            <tr>
+              <th style={{ width: '100px' }}>&nbsp;</th>
+              <th style={{ width: '150px' }}>목적</th>
+              <th style={{ width: '600px' }}>Action</th>
+              <th style={{ width: '150px' }}>관리자</th>
+              <th style={{ width: '300px' }}>인스턴스 이름</th>
+              <th style={{ width: '150px' }}>키페어</th>
+              <th style={{ width: '150px' }}>Public IP</th>
+              <th style={{ width: '150px' }}>인스턴스 타입</th>
+              <th style={{ width: '150px' }}>OS</th>
+              <th style={{ width: '150px' }}>저장공간</th>
+              <th style={{ width: '300px' }}>포트</th>
+              <th style={{ width: '100px' }}>요금</th>
+              <th style={{ width: '600px' }}>메모</th>
+            </tr>
+          </thead>
           <tbody>
-            <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
-            <th>목적</th>
-            <th>Action</th>
-            <th>관리자</th>
-            <th>인스턴스 이름</th>
-            <th>키페어</th>
-            <th>Public IP</th>
-            <th>인스턴스 타입</th>
-            <th>OS</th>
-            <th>저장공간</th>
-            <th>포트</th>
-            <th>요금</th>
-            <th>메모</th>
-
             {instances.length !== 0 ?
               instances.map((value: any, index: number) => (
                 <tr key={index}>
