@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Table from "@cloudscape-design/components/table";
 import { type FC, useEffect, useReducer, useState } from 'react'
 import { styled } from 'styled-components'
 import CreateModal from '../components/CreateModal'
@@ -7,6 +8,7 @@ import updateModalReducer from '../modules/ModalReducer'
 import UpdateModal from '../components/UpdateModal'
 import { Body, Title, Top } from '../styles/globals'
 import { useLocation } from 'react-router-dom'
+import { InstancesType } from '../utils/interfaces';
 
 const Instances: FC = () => {
   const location = useLocation()
@@ -41,7 +43,7 @@ const Instances: FC = () => {
     }).catch((err) => { console.error(err) })
   }, [serachParams.get('page')])
 
-  async function deleteInstance (uuid: string): Promise<void> {
+  async function deleteInstance(uuid: string): Promise<void> {
     if (confirm('정말 삭제 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}`, {
         method: 'DELETE'
@@ -50,7 +52,7 @@ const Instances: FC = () => {
     }
   }
 
-  async function restartInstance (uuid: string): Promise<void> {
+  async function restartInstance(uuid: string): Promise<void> {
     if (confirm('정말 재시작 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}/restart`, {
         method: 'POST'
@@ -59,7 +61,7 @@ const Instances: FC = () => {
     }
   }
 
-  async function resetInstance (uuid: string): Promise<void> {
+  async function resetInstance(uuid: string): Promise<void> {
     if (confirm('정말 초기화 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}/reset`, {
         method: 'POST'
@@ -68,7 +70,7 @@ const Instances: FC = () => {
     }
   }
 
-  async function downloadKeypair (uuid: string, name: string): Promise<void> {
+  async function downloadKeypair(uuid: string, name: string): Promise<void> {
     await axios(`/api/instances/${uuid}/keypair`, {
       method: 'GET'
     }).then((res) => {
@@ -77,14 +79,14 @@ const Instances: FC = () => {
       const a = document.createElement('a')
       a.href = downloadLink
       a.download = `${name}.ppk`
-      a.click()
+      a.click();
 
       URL.revokeObjectURL(downloadLink)
     })
       .catch((err) => { console.error(err) })
   }
 
-  async function updateForm (uuid: string): Promise<void> {
+  async function updateForm(uuid: string): Promise<void> {
     await axios(`/api/instances/${uuid}`, {
       method: 'GET'
     }).then((res) => {
@@ -102,7 +104,7 @@ const Instances: FC = () => {
     })
   }
 
-  async function inviteInstance (uuid: string): Promise<void> {
+  async function inviteInstance(uuid: string): Promise<void> {
     await axios('/api/invites', {
       method: 'POST',
       data: {
@@ -110,7 +112,6 @@ const Instances: FC = () => {
       }
     }).then((res) => {
       const $textarea = document.createElement('textarea')
-
       // body 요소에 존재해야 복사가 진행됨
       document.body.appendChild($textarea)
 
@@ -144,78 +145,137 @@ const Instances: FC = () => {
       </Top>
 
       <TableMain>
-        <table>
-          <thead>
-            <tr>
-              <th style={{ width: '100px' }}>&nbsp;</th>
-              <th style={{ width: '150px' }}>목적</th>
-              <th style={{ width: '600px' }}>Action</th>
-              <th style={{ width: '150px' }}>관리자</th>
-              <th style={{ width: '300px' }}>인스턴스 이름</th>
-              <th style={{ width: '150px' }}>키페어</th>
-              <th style={{ width: '150px' }}>Public IP</th>
-              <th style={{ width: '150px' }}>인스턴스 타입</th>
-              <th style={{ width: '150px' }}>OS</th>
-              <th style={{ width: '150px' }}>저장공간</th>
-              <th style={{ width: '300px' }}>포트</th>
-              <th style={{ width: '100px' }}>요금</th>
-              <th style={{ width: '600px' }}>메모</th>
-            </tr>
-          </thead>
+        <Table
+          columnDisplay={[
+            { id: "카테고리", visible: true },
+            { id: "목적", visible: true },
+            { id: "명령", visible: true },
+            { id: "관리자", visible: true },
+            { id: "인스턴스 명", visible: true },
+            { id: "키페어", visible: true },
+            { id: "공인 IP", visible: true },
+            { id: "인스턴스 타입", visible: true },
+            { id: "운영체제", visible: true },
+            { id: "저장공간 용량", visible: true },
+            { id: "포트", visible: true },
+            { id: "인스턴스 요금", visible: true },
+            { id: "메모", visible: true }
+          ]}
 
-          <tbody>
-            {instances.length !== 0
-              ? instances.map((value: any, index: number) => (
-                <tr key={index}>
-                  <td width={100}>{value.category}</td>
-                  <td width={150}>{value.description}</td>
-                  <td width={600}>
-                    <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                      <Button style={{ backgroundColor: '#3c8700', color: '#fff' }} onClick={() => { void inviteInstance(value.uuid) }}>
-                        초대링크 복사
-                      </Button>
+          columnDefinitions={[
+            {
+              id: "카테고리",
+              header: "카테고리",
+              cell: (item: InstancesType) => item.category,
+              width: '100px',
+              isRowHeader: true
+            },
+            {
+              id: "목적",
+              header: "목적",
+              cell: (item: InstancesType) => item.description,
+              width: '150px'
+            },
+            {
+              id: "명령",
+              header: "명령 표시",
+              cell: (item: InstancesType) => (
+                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
+                  <Button style={{ backgroundColor: '#3c8700', color: '#fff' }} onClick={() => { void inviteInstance(item.uuid) }}>
+                    초대링크 복사
+                  </Button>
 
-                      <Button style={{ backgroundColor: '#007dbc', color: '#fff' }} onClick={() => { void restartInstance(value.uuid) }}>
-                        재시작
-                      </Button>
+                  <Button style={{ backgroundColor: '#007dbc', color: '#fff' }} onClick={() => { void restartInstance(item.uuid) }}>
+                    재시작
+                  </Button>
 
-                      <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={ () => { void resetInstance(value.uuid) }}>
-                        초기화
-                      </Button>
+                  <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void resetInstance(item.uuid) }}>
+                    초기화
+                  </Button>
 
-                      <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={ () => { void deleteInstance(value.uuid) }}>
-                        삭제
-                      </Button>
+                  <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void deleteInstance(item.uuid) }}>
+                    삭제
+                  </Button>
 
-                      <Button style={{ backgroundColor: '#ff9900' }} onClick={ () => { void updateForm(value.uuid) }}>
-                        수정
-                      </Button>
-                    </div>
-                  </td>
-                  <td width={150}>{value.owner}</td>
-                  <td width={300}>{value.name}</td>
-                  <td width={150}>
-                    <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                      <Button style={{ backgroundColor: '#3c8700', color: 'white' }} onClick={() => { void downloadKeypair(value.uuid, value.name) }}>
-                        다운로드
-                      </Button>
-                    </div>
-                  </td>
-                  <td width={150}>{value.publicIP}</td>
-                  <td width={150}>{value.type}</td>
-                  <td width={150}>UBUNTU OS</td>
-                  <td width={150}>SSD {value.storageSize}GB</td>
-                  <td width={300}>{value.ports}</td>
-                  <td width={100}>${((value.pricePerHour * 24) * 30) + (value.storageSize !== undefined ? value.storageSize * 0.1 : 0 * 0.1)}/월</td>
-                  <td width={600}>{value.memo}</td>
-                </tr>
-              ))
-              : <tr>
-                <td color="black" colSpan={13}>No instances to display</td>
-              </tr>
+                  <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void updateForm(item.uuid) }}>
+                    수정
+                  </Button>
+                </div>
+              ),
+              width: '600px'
+            },
+            {
+              id: "관리자",
+              header: "owner",
+              cell: (item: InstancesType) => item.owner,
+              width: '150px'
+            },
+            {
+              id: "인스턴스 명",
+              header: "name",
+              cell: (item: InstancesType) => item.name,
+              width: '300px'
+            },
+            {
+              id: "키페어",
+              header: "키페어 설치",
+              cell: (item: InstancesType) => (
+                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
+                  <Button style={{ backgroundColor: '#3c8700', color: 'white' }} onClick={() => { void downloadKeypair(item.uuid, item.name) }}>
+                    다운로드
+                  </Button>
+                </div>
+              ),
+              width: '150px'
+            },
+            {
+              id: "공인 IP",
+              header: "공인 IP",
+              cell: (item: InstancesType) => item.publicIP,
+              width: '150px'
+            },
+            {
+              id: "인스턴스 타입",
+              header: "인스턴스 타입",
+              cell: (item: InstancesType) => item.type,
+              width: '150px'
+            },
+            {
+              id: "운영체제",
+              header: "운영체제 표시",
+              cell: () => "UBUNTU OS",
+              width: '150px'
+            },
+            {
+              id: "저장공간 용량",
+              header: "저장공간 용량",
+              cell: (item: InstancesType) => item.storageSize + " GB",
+              width: '150px'
+            },
+            {
+              id: "포트",
+              header: "포트 표시",
+              cell: (item: InstancesType) => item.ports,
+              width: '300px'
+            },
+            {
+              id: "인스턴스 요금",
+              header: "인스턴스 요금 표시",
+              cell: (item: InstancesType) => Number(item.pricePerHour) + (item.storageSize * 0.1),
+              width: '100px'
+            },
+            {
+              id: "메모",
+              header: "메모 표시",
+              cell: (item: InstancesType) => item.memo,
+              width: '600px'
             }
-          </tbody>
-        </table>
+          ]}
+
+          items={instances}
+
+          loadingText="Loading resources"
+        />
       </TableMain>
       <UpdateModal display={updateModalStatus} booleanAction={setUpdateModal} instance={event} instanceAction={dispatch} uuid={uuid}></UpdateModal>
       <CreateModal display={createModalStatus} action={setCreateModal}></CreateModal>
@@ -223,41 +283,18 @@ const Instances: FC = () => {
   )
 }
 
-export default Instances
-
 const TableMain = styled.div`
+  display: flex;
   width: 100%;
   height: calc(100% - 45px);
-  border: 1px solid black;
-  overflow: auto;
+  overflow: auto; /* Apply overflow to enable scrolling */
   scroll-snap-type: both mandatory;
 
   table {
-    width: 2850px;
-    border: .4px solid black;
-    scroll-snap-type: both mandatory;
-  }
-
-  tbody {
-    position: relative;
-  }
-
-  th, tr, td {
-    border: 1px solid black;
-  }
-
-  th {
-    padding: .25rem 0;
-  }
-
-  td {
-    padding: .5rem 0;
-  }
-
-  th, tr {
-    text-align: center;
+    width: 2850px !important;
+    scroll-snap-type: both mandatory !important;
     font-size: 16px;
-    overflow: auto;
-    width: auto;
   }
-`
+`;
+
+export default Instances;
