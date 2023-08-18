@@ -30,7 +30,7 @@ const CreateModal: FC<Props> = (props) => {
     forceUpdate()
     await axios.get(`/api/instances/price?instanceType=${type ?? 't3a.micro'}`)
       .then((res) => {
-        setPrice(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(storage) ? storage : 0) * 0.1))
+        setPrice(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(storage) ? 0 : storage) * 0.1))
       })
       .catch((err) => { console.error(err) })
   }
