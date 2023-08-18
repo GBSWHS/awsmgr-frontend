@@ -214,7 +214,9 @@ export default function Search() {
                 </tr>
               ))
               :
-              <></>
+              <tr>
+                <td color="black" colSpan={13}>No instances to display</td>
+              </tr>
             }
           </tbody>
         </table>
