@@ -82,10 +82,10 @@ const CreateModal: FC<Props> = (props) => {
         </div>
 
         <Form>
-          <input className="input" onChange={(e) => { dispatch({ type: 'setCategory', category: e.target.value }) }} placeholder="분류 | (예: 캡스톤)"></input><br />
-          <input className="input" onChange={(e) => { dispatch({ type: 'setName', name: e.target.value }) }} placeholder="이름 | (예: capstone-2023-1-4)"></input><br />
-          <input className="input" onChange={(e) => { dispatch({ type: 'setDescription', description: e.target.value }) }} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input><br />
-          <input className="input" onChange={(e) => { dispatch({ type: 'setOwner', owner: e.target.value }) }} placeholder="관리자 | (예: 박민혁)"></input><br />
+          <input className="input" onChange={(e) => { dispatch({ type: 'setCategory', category: e.target.value }) }} placeholder="분류 | (예: 캡스톤)"></input>
+          <input className="input" onChange={(e) => { dispatch({ type: 'setName', name: e.target.value }) }} placeholder="이름 | (예: capstone-2023-1-4)"></input>
+          <input className="input" onChange={(e) => { dispatch({ type: 'setDescription', description: e.target.value }) }} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input>
+          <input className="input" onChange={(e) => { dispatch({ type: 'setOwner', owner: e.target.value }) }} placeholder="관리자 | (예: 박민혁)"></input>
           <input className="input" onChange={(e) => { dispatch({ type: 'setType', instance: e.target.value }); void getPrice(e.target.value, event.storage) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
           <datalist id="typeList" defaultValue={'t3a.micro'}>
             <option value={'t3a.micro'}>t3a.micro</option>
@@ -93,7 +93,7 @@ const CreateModal: FC<Props> = (props) => {
             <option value={'t3a.small'}>t3a.small</option>
             <option value={'t2.nano'}>t2.nano</option>
           </datalist>
-          <input className="input ssd" value={event.storage} onChange={(e) => { dispatch({ type: 'setStorage', storage: parseInt(e.target.value) }); void getPrice(event.type, parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB<br />
+          <label><input className="input ssd" value={event.storage} onChange={(e) => { dispatch({ type: 'setStorage', storage: parseInt(e.target.value) }); void getPrice(event.type, parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB</label>
           <CreatableSelect
             className="createSelect"
             components={{ DropdownIndicator: null }}
@@ -117,8 +117,8 @@ const CreateModal: FC<Props> = (props) => {
               })
             }}
           />
-          기타메모<br />
-          <textarea onChange={(e) => { dispatch({ type: 'setMemo', memo: e.target.value }) }} value={event.memo}></textarea><br />
+          기타메모
+          <textarea onChange={(e) => { dispatch({ type: 'setMemo', memo: e.target.value }) }} value={event.memo}></textarea>
           <Bottom>
             <h1>예상 금액: {price}$/월</h1>
             <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void create() }}>생성</Button>
@@ -144,6 +144,10 @@ const Body = styled.div`
 
 const Form = styled.div`
   font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
   input.input {
     border: 1px solid hsl(0, 0%, 80%);
     border-radius: 4px;
@@ -158,7 +162,6 @@ const Form = styled.div`
   }
 
   .createSelect {
-    max-width: 70%;
     width: 100%;
     font-size: 16px;
     height: 50px;
@@ -167,13 +170,16 @@ const Form = styled.div`
 
   input.input, textarea {
     width: 100%;
-    max-width: 70%;
-    min-height: 50px;
     min-height: 50px;
     resize: none;
-    margin-bottom: 10px;
     padding-top: 0;
     padding-bottom: 0;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
   }
 
   textarea {
@@ -196,21 +202,14 @@ const Main = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  width: 40%;
-  height: 90%;
+  width: 100%;
   padding: 20px;
-  
-  @media(max-width: 780px) {
-    min-width: 540px;
-  }
-  
-  @media(max-width: 670px) {
-    min-width: 320px;
-  }
+  max-width: 500px;
 `
 
 const Bottom = styled.div`
   display: flex;
   float: right;
   align-items: center;
+  align-self: flex-end;
 `
