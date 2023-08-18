@@ -46,6 +46,22 @@ export const Top = styled.span`
   justify-content: space-between;
   margin-bottom: 10px;
   align-items: center;
+
+  > div {
+    display: flex;
+    align-items: center;
+    font-size: 21px;
+
+    svg {
+      margin: 0 5px;
+      cursor: pointer;
+    }
+
+    svg.disabled {
+      cursor: default;
+      opacity: .3 !important;
+    }
+  }
 `
 
 export const Title = styled.p`
