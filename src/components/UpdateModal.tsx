@@ -81,7 +81,7 @@ const UpdateModal: FC<Props> = (props) => {
               type="success"
               header={
                 <React.Fragment>
-                  인스턴스 생성 완료
+                  인스턴스 수정 완료
                 </React.Fragment>
               }
             >
@@ -94,7 +94,7 @@ const UpdateModal: FC<Props> = (props) => {
                 type="error"
                 header={
                   <React.Fragment>
-                    인스턴스 생성 중 에러 발생!
+                    인스턴스 수정 중 에러 발생!
                   </React.Fragment>
                 }
               >
@@ -106,14 +106,14 @@ const UpdateModal: FC<Props> = (props) => {
                 type="warning"
                 header={
                   <React.Fragment>
-                    인스턴스 생성중 ...
+                    인스턴스 수정 중 ...
                   </React.Fragment>
                 }
               >
                 새로고침을 하거나 창을 닫지 마세요.
               </Alert>
         }
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
           <p style={{ fontSize: '28px', fontWeight: 600, marginBottom: '20px' }}>인스턴스 수정</p>
           <svg style={{ cursor: 'pointer' }} onClick={() => { setChange(false); props.instanceAction({ type: 'shutdown' }); props.booleanAction(false) }} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"></path></svg>
         </div>
