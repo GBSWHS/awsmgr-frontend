@@ -65,7 +65,7 @@ const UpdateModal: FC<Props> = (props) => {
     }).then(() => {
       setStatus("success");
       window.location.reload()
-    }).catch((err) => { console.error(err) })
+    }).catch(() => { setStatus('error') })
   }
 
   return (

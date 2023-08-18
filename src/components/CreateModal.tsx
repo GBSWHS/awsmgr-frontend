@@ -74,7 +74,7 @@ const CreateModal: FC<Props> = (props) => {
       setTimeout(() => {
         window.location.reload()
       }, 800)
-    }).catch((err) => { setStatus("error") })
+    }).catch(() => { setStatus("error") })
   }
 
   return (
