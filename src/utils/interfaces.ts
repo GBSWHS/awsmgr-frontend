@@ -51,3 +51,18 @@ export type InvitesAction =
   | { type: 'setPorts', ports: string }
   | { type: 'setMemo', memo: string }
   | { type: 'setIp', ip: string }
+
+export interface InstancesType {
+  uuid: string,
+  category: string,
+  name: string,
+  description: string,
+  owner: string,
+  type: string | 't3a.micro' | 't3a.nano' | 't3a.small' | 't2.nano',
+  storageSize: number,
+  ports: string,
+  memo: string,
+  keypairId: string,
+  publicIP: string,
+  pricePerHour: number
+}
