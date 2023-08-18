@@ -6,6 +6,7 @@ import Invites from './pages/Invites'
 import Search from './pages/Search'
 import PathProcesor from './components/PathProcessor'
 import { type FC } from 'react'
+import "@cloudscape-design/global-styles/index.css"
 
 const App: FC = () =>
   <BrowserRouter>
