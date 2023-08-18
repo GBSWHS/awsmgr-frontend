@@ -1,9 +1,10 @@
-import { type FC, useCallback, useEffect, useState } from 'react'
+import React, { type FC, useCallback, useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 import CreatableSelect from 'react-select/creatable'
 import axios from 'axios'
 import Button from './Button'
 import { type ModalAction, type ModalState } from '../utils/interfaces'
+import { Alert } from '@cloudscape-design/components'
 
 interface Props {
   display: boolean
@@ -16,10 +17,11 @@ interface Props {
 const UpdateModal: FC<Props> = (props) => {
   const [, updateState] = useState<any>()
   const forceUpdate = useCallback(() => { updateState({}) }, [])
+  const [status, setStatus] = useState("normal");
   const [price, setPrice] = useState(0)
   const [isIpChange, setChange] = useState(false)
 
-  async function getPrice (type: string, storage: number): Promise<void> {
+  async function getPrice(type: string, storage: number): Promise<void> {
     forceUpdate()
     await axios.get(`/api/instances/price?instanceType=${type ?? 't3a.micro'}`)
       .then((res) => {
@@ -32,7 +34,7 @@ const UpdateModal: FC<Props> = (props) => {
     void getPrice(props.instance.type, props.instance.storage)
   }, [price])
 
-  function portEnter (e: any): void {
+  function portEnter(e: any): void {
     if (e.keyCode === 13) {
       const exists = props.instance.ports.some(item => item.value === props.instance.port)
       if (!exists) {
@@ -42,8 +44,9 @@ const UpdateModal: FC<Props> = (props) => {
     }
   }
 
-  async function update (): Promise<void> {
+  async function update(): Promise<void> {
     forceUpdate()
+    setStatus("loading");
     await axios(`/api/instances/${props.uuid}`, {
       method: 'PUT',
       headers: {
@@ -60,7 +63,7 @@ const UpdateModal: FC<Props> = (props) => {
         memo: props.instance.memo
       }
     }).then(() => {
-      alert('인스턴스가 성공적으로 수정되었습니다.')
+      setStatus("success");
       window.location.reload()
     }).catch((err) => { console.error(err) })
   }
@@ -68,6 +71,48 @@ const UpdateModal: FC<Props> = (props) => {
   return (
     <Body style={{ display: props.display ? 'block' : 'none' }}>
       <Main>
+        {status === "normal" ?
+          <></>
+          :
+          status === "success" ?
+            <Alert
+              dismissible
+              statusIconAriaLabel="Success"
+              type="success"
+              header={
+                <React.Fragment>
+                  인스턴스 생성 완료
+                </React.Fragment>
+              }
+            >
+              잠시 후 새로고침 됩니다.
+            </Alert>
+            :
+            status === "error" ?
+              <Alert
+                statusIconAriaLabel="Error"
+                type="error"
+                header={
+                  <React.Fragment>
+                    인스턴스 생성 중 에러 발생!
+                  </React.Fragment>
+                }
+              >
+                잠시 후 다시시도 해주세요!
+              </Alert>
+              :
+              <Alert
+                statusIconAriaLabel="Warning"
+                type="warning"
+                header={
+                  <React.Fragment>
+                    인스턴스 생성중 ...
+                  </React.Fragment>
+                }
+              >
+                새로고침을 하거나 창을 닫지 마세요.
+              </Alert>
+        }
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <p style={{ fontSize: '28px', fontWeight: 600, marginBottom: '20px' }}>인스턴스 수정</p>
           <svg style={{ cursor: 'pointer' }} onClick={() => { setChange(false); props.instanceAction({ type: 'shutdown' }); props.booleanAction(false) }} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"></path></svg>
