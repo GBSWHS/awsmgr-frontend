@@ -1,34 +1,36 @@
-import { styled } from "styled-components"
-import { FormEvent, useState } from "react"
-import axios from "axios";
+import { styled } from 'styled-components'
+import { type FormEvent, useState, type FC } from 'react'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
-export default function Login() {
-  const [fetched, setFetched] = useState(false);
-  const [password, setPassword] = useState<string>("");
+const Login: FC = () => {
+  const [fetched, setFetched] = useState(false)
+  const [password, setPassword] = useState<string>('')
+  const navigate = useNavigate()
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setFetched(true);
+  async function onSubmit (e: FormEvent<HTMLFormElement>): Promise<void> {
+    e.preventDefault()
+    setFetched(true)
 
-    await axios(`/api/auth/login`, {
+    await axios('/api/auth/login', {
       method: 'POST',
       data: {
         password
       }
-    }).then(() => window.location.href = "/instances?page=0")
-      .catch(() => alert("비밀번호가 일치하지 않습니다."))
+    }).then(() => { navigate('/instances?page=0') })
+      .catch(() => { alert('비밀번호가 일치하지 않습니다.') })
 
-    setFetched(false);
+    setFetched(false)
   }
 
   return (
     <Body>
-      <div className={`background ${fetched ? "fetched" : "unfetched"}`}>
+      <div className={`background ${fetched ? 'fetched' : 'unfetched'}`}>
       </div>
       <Container>
         <div className="logo"></div>
         <div className="contents">
-          <Form onSubmit={onSubmit}>
+          <Form onSubmit={(e) => { void onSubmit(e) }}>
             <Header>
               <h2>
                 로그인<br />
@@ -38,23 +40,25 @@ export default function Login() {
             <Content>
               <Field>
                 <label>사용자 이름</label>
-                <input type="text" placeholder="admin" value={"admin"} disabled style={{ color: 'gray' }} />
+                <input type="text" placeholder="admin" value={'admin'} disabled style={{ color: 'gray' }} />
               </Field>
               <Field>
                 <label>비밀번호</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input type="password" value={password} onChange={(e) => { setPassword(e.target.value) }} />
               </Field>
               <Button type="submit">로그인</Button>
             </Content>
           </Form>
           <Footer>
-            <small>계속 진행하면 <a href="https://aws.amazon.com/agreement/" target="_blank">AWS 이용계약</a> 또는 AWS 서비스에 대한 기타 계약 및 <a href="https://aws.amazon.com/privacy/" target="_blank">개인정보 처리방침</a>에 동의하게 됩니다. 이 사이트는 필수 쿠키를 사용합니다. 자세한 내용은 <a href="https://aws.amazon.com/legal/cookies" target="_blank">쿠키 고지</a>를 참조하세요.</small>
+            <small>계속 진행하면 <a href="https://aws.amazon.com/agreement/" target="_blank" rel="noreferrer">AWS 이용계약</a> 또는 AWS 서비스에 대한 기타 계약 및 <a href="https://aws.amazon.com/privacy/" target="_blank" rel="noreferrer">개인정보 처리방침</a>에 동의하게 됩니다. 이 사이트는 필수 쿠키를 사용합니다. 자세한 내용은 <a href="https://aws.amazon.com/legal/cookies" target="_blank" rel="noreferrer">쿠키 고지</a>를 참조하세요.</small>
           </Footer>
         </div>
       </Container>
     </Body>
   )
 }
+
+export default Login
 
 const Body = styled.div`
   position: relative;
@@ -246,4 +250,4 @@ const Footer = styled.div`
     font-weight: 700;
     line-height: .75rem;
   }
-` 
+`

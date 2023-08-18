@@ -1,14 +1,19 @@
-import { useCallback, useEffect, useReducer, useState } from "react"
-import { styled } from "styled-components"
-import createModalReducer from "../modules/ModalReducer"
-import CreatableSelect from 'react-select/creatable';
-import axios from "axios";
-import Button from "./Button";
+import { type FC, useCallback, useEffect, useReducer, useState } from 'react'
+import { styled } from 'styled-components'
+import createModalReducer from '../modules/ModalReducer'
+import CreatableSelect from 'react-select/creatable'
+import axios from 'axios'
+import Button from './Button'
 
-export default function CreateModal(props: { display: boolean, action: React.Dispatch<React.SetStateAction<boolean>> }) {
-  const [_, updateState] = useState<any>();
-  const forceUpdate = useCallback(() => updateState({}), []);
-  const [price, setPrice] = useState(0);
+interface Props {
+  display: boolean
+  action: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const CreateModal: FC<Props> = (props) => {
+  const [, updateState] = useState<any>()
+  const forceUpdate = useCallback(() => { updateState({}) }, [])
+  const [price, setPrice] = useState(0)
   const [event, dispatch] = useReducer(createModalReducer, {
     category: '',
     name: '',
@@ -18,25 +23,25 @@ export default function CreateModal(props: { display: boolean, action: React.Dis
     storage: 8,
     port: '',
     ports: [],
-    memo: '',
+    memo: ''
   })
 
-  async function getPrice(type: string, storage: number) {
-    forceUpdate();
-    await axios.get(`/api/instances/price?instanceType=${type ? type : 't3a.micro'}`)
+  async function getPrice (type: string, storage: number): Promise<void> {
+    forceUpdate()
+    await axios.get(`/api/instances/price?instanceType=${type ?? 't3a.micro'}`)
       .then((res) => {
-        setPrice(((res.data.body.pricePerHour * 24) * 30) + (storage ? storage * 0.1 : 0 * 0.1))
+        setPrice(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(storage) ? storage : 0) * 0.1))
       })
-      .catch((err) => console.error(err))
+      .catch((err) => { console.error(err) })
   }
 
   useEffect(() => {
-    getPrice(event.type, event.storage)
+    void getPrice(event.type, event.storage)
   }, [])
 
-  function portEnter(e: any) {
+  function portEnter (e: any): void {
     if (e.keyCode === 13) {
-      const exists = event.ports.some(item => item.value === event.port);
+      const exists = event.ports.some((item: any) => item.value === event.port) as boolean
       if (!exists) {
         dispatch({ type: 'setPort', port: '' })
         dispatch({ type: 'addPort', port: event.port })
@@ -44,8 +49,8 @@ export default function CreateModal(props: { display: boolean, action: React.Dis
     }
   }
 
-  async function create() {
-    forceUpdate();
+  async function create (): Promise<void> {
+    forceUpdate()
     await axios('/api/instances', {
       method: 'POST',
       headers: {
@@ -58,14 +63,14 @@ export default function CreateModal(props: { display: boolean, action: React.Dis
         owner: event.owner,
         type: event.type,
         storageSize: event.storage,
-        ports: event.ports.map(item => item.value).sort().join(','),
+        ports: event.ports.map((item: any) => item.value).sort().join(','),
         memo: event.memo
       }
     }).then((res) => {
-      console.log(res.data);
-      alert("인스턴스가 성공적으로 생성되었습니다.")
-      window.location.reload();
-    }).catch((err) => console.error(err))
+      console.log(res.data)
+      alert('인스턴스가 성공적으로 생성되었습니다.')
+      window.location.reload()
+    }).catch((err) => { console.error(err) })
   }
 
   return (
@@ -73,22 +78,22 @@ export default function CreateModal(props: { display: boolean, action: React.Dis
       <Main>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <p style={{ fontSize: '28px', fontWeight: 600, marginBottom: '20px' }}>인스턴스 생성</p>
-          <svg style={{ cursor: 'pointer' }} onClick={() => props.action(false)} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"></path></svg>
+          <svg style={{ cursor: 'pointer' }} onClick={() => { props.action(false) }} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"></path></svg>
         </div>
 
         <Form>
-          <input className="input" onChange={(e) => dispatch({ type: 'setCategory', category: e.target.value })} placeholder="분류 | (예: 캡스톤)"></input><br />
-          <input className="input" onChange={(e) => dispatch({ type: 'setName', name: e.target.value })} placeholder="이름 | (예: capstone-2023-1-4)"></input><br />
-          <input className="input" onChange={(e) => dispatch({ type: 'setDescription', description: e.target.value })} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input><br />
-          <input className="input" onChange={(e) => dispatch({ type: 'setOwner', owner: e.target.value })} placeholder="관리자 | (예: 박민혁)"></input><br />
-          <input className="input" onChange={async (e) => { dispatch({ type: 'setType', instance: e.target.value }); await getPrice(e.target.value, event.storage) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
-          <datalist id="typeList" defaultValue={"t3a.micro"}>
-            <option value={"t3a.micro"}>t3a.micro</option>
-            <option value={"t3a.nano"}>t3a.nano</option>
-            <option value={"t3a.small"}>t3a.small</option>
-            <option value={"t2.nano"}>t2.nano</option>
+          <input className="input" onChange={(e) => { dispatch({ type: 'setCategory', category: e.target.value }) }} placeholder="분류 | (예: 캡스톤)"></input><br />
+          <input className="input" onChange={(e) => { dispatch({ type: 'setName', name: e.target.value }) }} placeholder="이름 | (예: capstone-2023-1-4)"></input><br />
+          <input className="input" onChange={(e) => { dispatch({ type: 'setDescription', description: e.target.value }) }} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input><br />
+          <input className="input" onChange={(e) => { dispatch({ type: 'setOwner', owner: e.target.value }) }} placeholder="관리자 | (예: 박민혁)"></input><br />
+          <input className="input" onChange={(e) => { dispatch({ type: 'setType', instance: e.target.value }); void getPrice(e.target.value, event.storage) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
+          <datalist id="typeList" defaultValue={'t3a.micro'}>
+            <option value={'t3a.micro'}>t3a.micro</option>
+            <option value={'t3a.nano'}>t3a.nano</option>
+            <option value={'t3a.small'}>t3a.small</option>
+            <option value={'t2.nano'}>t2.nano</option>
           </datalist>
-          <input className="input ssd" value={event.storage} onChange={async (e) => { dispatch({ type: 'setStorage', storage: parseInt(e.target.value) }); await getPrice(event.type, parseInt(e.target.value)); }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB<br />
+          <input className="input ssd" value={event.storage} onChange={(e) => { dispatch({ type: 'setStorage', storage: parseInt(e.target.value) }); void getPrice(event.type, parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB<br />
           <CreatableSelect
             className="createSelect"
             components={{ DropdownIndicator: null }}
@@ -96,8 +101,8 @@ export default function CreateModal(props: { display: boolean, action: React.Dis
             isClearable
             isMulti
             menuIsOpen={false}
-            onChange={(portValue) => dispatch({ type: 'setPorts', ports: portValue as any })}
-            onInputChange={(e) => dispatch({ type: 'setPort', port: e.toString() })}
+            onChange={(portValue) => { dispatch({ type: 'setPorts', ports: portValue as any }) }}
+            onInputChange={(e) => { dispatch({ type: 'setPort', port: e.toString() }) }}
             onKeyDown={portEnter}
             placeholder="포트"
             value={event.ports}
@@ -113,16 +118,18 @@ export default function CreateModal(props: { display: boolean, action: React.Dis
             }}
           />
           기타메모<br />
-          <textarea onChange={(e) => dispatch({ type: 'setMemo', memo: e.target.value })} value={event.memo}></textarea><br />
+          <textarea onChange={(e) => { dispatch({ type: 'setMemo', memo: e.target.value }) }} value={event.memo}></textarea><br />
           <Bottom>
             <h1>예상 금액: {price}$/월</h1>
-            <Button style={{ backgroundColor: "#ff9900" }} onClick={create}>생성</Button>
+            <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void create() }}>생성</Button>
           </Bottom>
         </Form>
       </Main>
-    </Body >
+    </Body>
   )
 }
+
+export default CreateModal
 
 const Body = styled.div`
   z-index: 9;

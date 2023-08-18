@@ -1,32 +1,40 @@
-import { useCallback, useEffect, useState } from "react"
-import { styled } from "styled-components"
-import CreatableSelect from 'react-select/creatable';
-import axios from "axios";
-import Button from "./Button";
-import { ModalAction, ModalState } from "../utils/interfaces";
+import { type FC, useCallback, useEffect, useState } from 'react'
+import { styled } from 'styled-components'
+import CreatableSelect from 'react-select/creatable'
+import axios from 'axios'
+import Button from './Button'
+import { type ModalAction, type ModalState } from '../utils/interfaces'
 
-export default function UpdateModal(props: { display: boolean, booleanAction: React.Dispatch<React.SetStateAction<boolean>>, instance: ModalState, instanceAction: React.Dispatch<ModalAction>, uuid: string }) {
-  const [_, updateState] = useState<any>();
-  const forceUpdate = useCallback(() => updateState({}), []);
-  const [price, setPrice] = useState(0);
+interface Props {
+  display: boolean
+  booleanAction: React.Dispatch<React.SetStateAction<boolean>>
+  instance: ModalState
+  instanceAction: React.Dispatch<ModalAction>
+  uuid: string
+}
+
+const UpdateModal: FC<Props> = (props) => {
+  const [, updateState] = useState<any>()
+  const forceUpdate = useCallback(() => { updateState({}) }, [])
+  const [price, setPrice] = useState(0)
   const [isIpChange, setChange] = useState(false)
 
-  async function getPrice(type: string, storage: number) {
-    forceUpdate();
-    await axios.get(`/api/instances/price?instanceType=${type ? type : 't3a.micro'}`)
+  async function getPrice (type: string, storage: number): Promise<void> {
+    forceUpdate()
+    await axios.get(`/api/instances/price?instanceType=${type ?? 't3a.micro'}`)
       .then((res) => {
-        setPrice(((res.data.body.pricePerHour * 24) * 30) + (storage ? storage * 0.1 : 0 * 0.1))
+        setPrice(((res.data.body.pricePerHour * 24) * 30) + (Number.isNaN(storage) ? storage * 0.1 : 0 * 0.1))
       })
-      .catch((err) => console.error(err))
+      .catch((err) => { console.error(err) })
   }
 
   useEffect(() => {
-    getPrice(props.instance.type, props.instance.storage)
+    void getPrice(props.instance.type, props.instance.storage)
   }, [price])
 
-  function portEnter(e: any) {
+  function portEnter (e: any): void {
     if (e.keyCode === 13) {
-      const exists = props.instance.ports.some(item => item.value === props.instance.port);
+      const exists = props.instance.ports.some(item => item.value === props.instance.port)
       if (!exists) {
         props.instanceAction({ type: 'setPort', port: '' })
         props.instanceAction({ type: 'addPort', port: props.instance.port })
@@ -34,8 +42,8 @@ export default function UpdateModal(props: { display: boolean, booleanAction: Re
     }
   }
 
-  async function update() {
-    forceUpdate();
+  async function update (): Promise<void> {
+    forceUpdate()
     await axios(`/api/instances/${props.uuid}`, {
       method: 'PUT',
       headers: {
@@ -52,9 +60,9 @@ export default function UpdateModal(props: { display: boolean, booleanAction: Re
         memo: props.instance.memo
       }
     }).then(() => {
-      alert("인스턴스가 성공적으로 수정되었습니다.")
-      window.location.reload();
-    }).catch((err) => console.error(err))
+      alert('인스턴스가 성공적으로 수정되었습니다.')
+      window.location.reload()
+    }).catch((err) => { console.error(err) })
   }
 
   return (
@@ -62,22 +70,22 @@ export default function UpdateModal(props: { display: boolean, booleanAction: Re
       <Main>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <p style={{ fontSize: '28px', fontWeight: 600, marginBottom: '20px' }}>인스턴스 수정</p>
-          <svg style={{ cursor: 'pointer' }} onClick={() => { setChange(false); props.instanceAction({ type: 'shutdown' }); props.booleanAction(false); }} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"></path></svg>
+          <svg style={{ cursor: 'pointer' }} onClick={() => { setChange(false); props.instanceAction({ type: 'shutdown' }); props.booleanAction(false) }} stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"></path></svg>
         </div>
 
         <Form>
-          <input className="input" value={props.instance.category} onChange={(e) => props.instanceAction({ type: 'setCategory', category: e.target.value })} placeholder="분류 | (예: 캡스톤)"></input><br />
-          <input className="input" disabled value={props.instance.name} onChange={(e) => props.instanceAction({ type: 'setName', name: e.target.value })} placeholder="이름 | (예: capstone-2023-1-4)"></input><br />
-          <input className="input" value={props.instance.description} onChange={(e) => props.instanceAction({ type: 'setDescription', description: e.target.value })} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input><br />
-          <input className="input" value={props.instance.owner} onChange={(e) => props.instanceAction({ type: 'setOwner', owner: e.target.value })} placeholder="관리자 | (예: 박민혁)"></input><br />
-          <input className="input" value={props.instance.type} onChange={async (e) => { setChange(true); props.instanceAction({ type: 'setType', instance: e.target.value }); await getPrice(e.target.value, props.instance.storage) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
-          <datalist id="typeList" defaultValue={"t3a.micro"}>
-            <option value={"t3a.micro"}>t3a.micro</option>
-            <option value={"t3a.nano"}>t3a.nano</option>
-            <option value={"t3a.small"}>t3a.small</option>
-            <option value={"t2.nano"}>t2.nano</option>
+          <input className="input" value={props.instance.category} onChange={(e) => { props.instanceAction({ type: 'setCategory', category: e.target.value }) }} placeholder="분류 | (예: 캡스톤)"></input><br />
+          <input className="input" disabled value={props.instance.name} onChange={(e) => { props.instanceAction({ type: 'setName', name: e.target.value }) }} placeholder="이름 | (예: capstone-2023-1-4)"></input><br />
+          <input className="input" value={props.instance.description} onChange={(e) => { props.instanceAction({ type: 'setDescription', description: e.target.value }) }} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input><br />
+          <input className="input" value={props.instance.owner} onChange={(e) => { props.instanceAction({ type: 'setOwner', owner: e.target.value }) }} placeholder="관리자 | (예: 박민혁)"></input><br />
+          <input className="input" value={props.instance.type} onChange={(e) => { setChange(true); props.instanceAction({ type: 'setType', instance: e.target.value }); void getPrice(e.target.value, props.instance.storage) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
+          <datalist id="typeList" defaultValue={'t3a.micro'}>
+            <option value={'t3a.micro'}>t3a.micro</option>
+            <option value={'t3a.nano'}>t3a.nano</option>
+            <option value={'t3a.small'}>t3a.small</option>
+            <option value={'t2.nano'}>t2.nano</option>
           </datalist>
-          <input className="input ssd" value={props.instance.storage} onChange={async (e) => { setChange(true); props.instanceAction({ type: 'setStorage', storage: parseInt(e.target.value) }); await getPrice(props.instance.type, parseInt(e.target.value)); }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB<br />
+          <input className="input ssd" value={props.instance.storage} onChange={(e) => { setChange(true); props.instanceAction({ type: 'setStorage', storage: parseInt(e.target.value) }); void getPrice(props.instance.type, parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB<br />
           <CreatableSelect
             value={props.instance.ports.map((value) => { return { label: value, value } })}
             className="createSelect"
@@ -87,8 +95,8 @@ export default function UpdateModal(props: { display: boolean, booleanAction: Re
             isClearable
             isMulti
             menuIsOpen={false}
-            onChange={(portValue) => props.instanceAction({ type: 'setPorts', ports: portValue as any })}
-            onInputChange={(e) => props.instanceAction({ type: 'setPort', port: e.toString() })}
+            onChange={(portValue) => { props.instanceAction({ type: 'setPorts', ports: portValue as any }) }}
+            onInputChange={(e) => { props.instanceAction({ type: 'setPort', port: e.toString() }) }}
             onKeyDown={portEnter}
             placeholder="포트"
             styles={{
@@ -103,16 +111,18 @@ export default function UpdateModal(props: { display: boolean, booleanAction: Re
             }}
           />
           기타메모<br />
-          <textarea value={props.instance.memo} onChange={(e) => props.instanceAction({ type: 'setMemo', memo: e.target.value })}></textarea><br />
+          <textarea value={props.instance.memo} onChange={(e) => { props.instanceAction({ type: 'setMemo', memo: e.target.value }) }}></textarea><br />
           <Bottom>
             <h1>예상 금액: {price}$/월</h1>
-            <Button style={{ backgroundColor: "#ff9900" }} onClick={update}>{isIpChange ? "수정 후 재시작" : "수정"}</Button>
+            <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void update() }}>{isIpChange ? '수정 후 재시작' : '수정'}</Button>
           </Bottom>
         </Form>
       </Main>
     </Body >
   )
 }
+
+export default UpdateModal
 
 const Body = styled.div`
   z-index: 9;

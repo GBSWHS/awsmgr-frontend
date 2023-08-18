@@ -1,12 +1,12 @@
-import { Body, Title, Top } from "../styles/globals"
-import Button from "../components/Button"
-import { useParams } from "react-router-dom"
-import { useEffect, useReducer, useState } from "react";
-import axios from "axios";
-import invitesReducer from "../modules/InvitesReducer";
-import { styled } from "styled-components";
+import { Body, Title, Top } from '../styles/globals'
+import Button from '../components/Button'
+import { useNavigate, useParams } from 'react-router-dom'
+import { type FC, useEffect, useReducer, useState } from 'react'
+import axios from 'axios'
+import invitesReducer from '../modules/InvitesReducer'
+import { styled } from 'styled-components'
 
-export default function Invites() {
+const Invites: FC = () => {
   const [event, dispatch] = useReducer(invitesReducer, {
     category: '',
     name: '',
@@ -16,10 +16,16 @@ export default function Invites() {
     storage: 0,
     ports: '',
     memo: '',
-    ip: '',
+    ip: ''
   })
-  const { uuid } = useParams<{ uuid: string }>();
+  const { uuid } = useParams<{ uuid: string }>()
+  const navigate = useNavigate()
   const [hover, setHover] = useState('mouse-normal')
+
+  if (uuid === undefined) {
+    navigate('/login')
+    return <></>
+  }
 
   useEffect(() => {
     axios(`/api/invites/${uuid}`, {
@@ -34,47 +40,45 @@ export default function Invites() {
       dispatch({ type: 'setPorts', ports: res.data.body.ports })
       dispatch({ type: 'setIp', ip: res.data.body.publicIP })
     }).catch(() => {
-      alert("인스턴스를 불러오는 중에 에러가 발생했습니다.\n");
+      alert('인스턴스를 불러오는 중에 에러가 발생했습니다.\n')
       setTimeout(() => {
-        window.location.href = "https://google.co.kr"
+        window.location.href = 'https://google.co.kr'
       }, 2500)
     })
   }, [uuid])
 
-  async function restartInstance() {
-    if (confirm("정말 재시작 하시겠습니까?")) {
-      await axios(`/api/invites/${uuid}/restart`, {
-        method: 'POST',
-      }).then(() => alert("인스턴스가 재시작 되었습니다."))
-        .catch(() => alert("인스턴스를 재시작하는 도중 에러가 발생했습니다."))
+  async function restartInstance (): Promise<void> {
+    if (confirm('정말 재시작 하시겠습니까?')) {
+      await axios(`/api/invites/${uuid ?? ''}/restart`, {
+        method: 'POST'
+      }).then(() => { alert('인스턴스가 재시작 되었습니다.') })
+        .catch(() => { alert('인스턴스를 재시작하는 도중 에러가 발생했습니다.') })
     }
-    else return
   }
 
-  async function resetInstance() {
-    if (confirm("정말 초기화 하시겠습니까?")) {
-      await axios(`/api/invites/${uuid}/reset`, {
-        method: 'POST',
-      }).then(() => alert("인스턴스가 초기화 되었습니다."))
-        .catch(() => alert("인스턴스를 초기화하는 도중 에러가 발생했습니다."))
+  async function resetInstance (): Promise<void> {
+    if (confirm('정말 초기화 하시겠습니까?')) {
+      await axios(`/api/invites/${uuid ?? ''}/reset`, {
+        method: 'POST'
+      }).then(() => { alert('인스턴스가 초기화 되었습니다.') })
+        .catch(() => { alert('인스턴스를 초기화하는 도중 에러가 발생했습니다.') })
     }
-    else return
   }
 
-  async function downloadKeypair() {
-    await axios(`/api/invites/${uuid}/keypair`, {
-      method: 'GET',
+  async function downloadKeypair (): Promise<void> {
+    await axios(`/api/invites/${uuid ?? ''}/keypair`, {
+      method: 'GET'
     }).then((res) => {
-      const blob = new Blob([res.data.body], { type: 'text/plain' });
-      const downloadLink = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = downloadLink;
-      a.download = `${event.name ? event.name : uuid}.ppk`;
-      a.click();
+      const blob = new Blob([res.data.body], { type: 'text/plain' })
+      const downloadLink = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = downloadLink
+      a.download = `${event.name as string}.ppk`
+      a.click()
 
-      URL.revokeObjectURL(downloadLink);
+      URL.revokeObjectURL(downloadLink)
     })
-      .catch((err) => console.error(err))
+      .catch((err) => { console.error(err) })
   }
 
   return (
@@ -82,21 +86,21 @@ export default function Invites() {
       <Top>
         <Title>인스턴스</Title>
         <div>
-          <Button style={{ backgroundColor: "#3c8700", color: 'white' }} onClick={downloadKeypair}>키 페어 설치</Button>
-          <Button style={{ backgroundColor: "#007dbc", color: "#fff" }} onClick={restartInstance}>서버 재시작</Button>
-          <Button style={{ backgroundColor: "#df3312", color: "#fff" }} onClick={resetInstance}>초기화</Button>
+          <Button style={{ backgroundColor: '#3c8700', color: 'white' }} onClick={() => { void downloadKeypair() }}>키 페어 설치</Button>
+          <Button style={{ backgroundColor: '#007dbc', color: '#fff' }} onClick={() => { void restartInstance() }}>서버 재시작</Button>
+          <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void resetInstance() }}>초기화</Button>
         </div>
       </Top>
       <Main>
         <Left>
-          <div onClick={() => window.location.href = "https://aws.gbsw.hs.kr"}>
+          <a href="https://aws.gbsw.hs.kr" style={{ display: 'block' }}>
             <Image
               className={hover}
-              onMouseEnter={() => setHover('mouse-on')}
-              onMouseLeave={() => setHover('mouse-out')} />
+              onMouseEnter={() => { setHover('mouse-on') }}
+              onMouseLeave={() => { setHover('mouse-out') }} />
             <br /><br />
             <h2>GBSW AWS 메뉴얼</h2>
-          </div>
+          </a>
         </Left>
         <Right>
           <div>
@@ -112,6 +116,8 @@ export default function Invites() {
     </Body>
   )
 }
+
+export default Invites
 
 const Main = styled.div`
   width: 100%;
