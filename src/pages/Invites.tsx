@@ -100,7 +100,7 @@ const Invites: FC = () => {
             media={{
               content: (
                 <img
-                  src="/src/assets/icon/ec2-1.png"
+                  src="/assets/icon/ec2-1.png"
                   alt="placeholder"
                 />
               ),
