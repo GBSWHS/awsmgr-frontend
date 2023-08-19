@@ -134,6 +134,7 @@ const UpdateModal: FC<Props> = (props) => {
           </datalist>
           <label><input className="input ssd" value={props.instance.storage} onChange={(e) => { setChange(true); props.instanceAction({ type: 'setStorage', storage: parseInt(e.target.value) }); void getPrice(props.instance.type, parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB</label>
           <CreatableSelect
+            value={props.instance.ports.map((value) => { return { label: value, value } })}
             className="createSelect"
             components={{ DropdownIndicator: null }}
             inputValue={props.instance.port}
@@ -144,7 +145,6 @@ const UpdateModal: FC<Props> = (props) => {
             onInputChange={(e) => { props.instanceAction({ type: 'setPort', port: e.toString() }) }}
             onKeyDown={portEnter}
             placeholder="포트"
-            value={props.instance.ports}
             styles={{
               control: (base) => ({
                 ...base,
