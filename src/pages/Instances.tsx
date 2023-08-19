@@ -61,7 +61,7 @@ const Instances: FC = () => {
   }, [])
 
   useEffect(() => {
-    const socket = io('/api/notice')
+    const socket = io(window.location.origin)
 
     socket.on('message', (data) => {
       toast(() => (
