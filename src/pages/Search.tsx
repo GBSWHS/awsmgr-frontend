@@ -3,12 +3,16 @@ import { type FC, useEffect, useReducer, useState } from 'react'
 import { styled } from 'styled-components'
 import CreateModal from '../components/CreateModal'
 import Button from '../components/Button'
+import ButtonScape from '@cloudscape-design/components/button'
 import updateModalReducer from '../modules/ModalReducer'
 import UpdateModal from '../components/UpdateModal'
 import { Body, Title, Top } from '../styles/globals'
 import { useLocation, useParams } from 'react-router-dom'
-import { Table } from '@cloudscape-design/components'
+import { Alert, StatusIndicator, Table } from '@cloudscape-design/components'
 import { InstancesType } from '../utils/interfaces'
+import showStatus from '../utils/showStatus'
+import { toast } from 'react-hot-toast'
+import { io } from 'socket.io-client'
 
 const Search: FC = () => {
   const { search } = useParams<{ search: string }>()
@@ -105,20 +109,31 @@ const Search: FC = () => {
     })
   }
 
+  useEffect(() => {
+    const socket = io('/')
+
+    socket.on('message', (data) => {
+      toast(() => (
+        <Alert type={data.type.toLowerCase()}>
+          {data.message}
+        </Alert>
+      ));
+    })
+  }, [])
+
   async function inviteInstance(uuid: string): Promise<void> {
     await axios('/api/invites', {
       method: 'POST',
       data: {
-        instanceUUID: uuid
+        instanceID: uuid
       }
     }).then((res) => {
       const $textarea = document.createElement('textarea')
-
       // body 요소에 존재해야 복사가 진행됨
       document.body.appendChild($textarea)
 
       // 복사할 특정 텍스트를 임시의 textarea에 넣어주고 모두 셀렉션 상태
-      $textarea.value = `${window.location.origin}/invites/${res.data.body.uuid as string}`
+      $textarea.value = `${window.location.origin}/invites/${res.data.body.id as string}`
       $textarea.select()
 
       // 복사 후 textarea 지우기
@@ -152,6 +167,7 @@ const Search: FC = () => {
             { id: "카테고리", visible: true },
             { id: "목적", visible: true },
             { id: "명령", visible: true },
+            { id: "상태", visible: true },
             { id: "관리자", visible: true },
             { id: "인스턴스 명", visible: true },
             { id: "키페어", visible: true },
@@ -182,39 +198,48 @@ const Search: FC = () => {
               id: "명령",
               header: "명령 표시",
               cell: (item: InstancesType) => (
-                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                  <Button style={{ backgroundColor: '#3c8700', color: '#fff' }} onClick={() => { void inviteInstance(item.uuid) }}>
+                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap', gap: '8px', lineBreak: 'auto' }}>
+                  <ButtonScape className='greenButton ButtonList' variant="primary" onClick={() => { void inviteInstance(item.id) }}>
                     초대링크 복사
-                  </Button>
+                  </ButtonScape>
 
-                  <Button style={{ backgroundColor: '#007dbc', color: '#fff' }} onClick={() => { void restartInstance(item.uuid) }}>
+                  <ButtonScape className='blueButton ButtonList' variant="primary" onClick={() => { void restartInstance(item.id) }}>
                     재시작
-                  </Button>
+                  </ButtonScape>
 
-                  <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void resetInstance(item.uuid) }}>
+                  <ButtonScape className='redButton ButtonList' variant="primary" onClick={() => { void resetInstance(item.id) }}>
                     초기화
-                  </Button>
+                  </ButtonScape>
 
-                  <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void deleteInstance(item.uuid) }}>
+                  <ButtonScape className='redButton ButtonList' variant="primary" onClick={() => { void deleteInstance(item.id) }}>
                     삭제
-                  </Button>
+                  </ButtonScape>
 
-                  <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void updateForm(item.uuid) }}>
+                  <ButtonScape className='orangeButton ButtonList' variant="primary" onClick={() => { void updateForm(item.id) }}>
                     수정
-                  </Button>
+                  </ButtonScape>
                 </div>
               ),
               width: '600px'
             },
             {
+              id: "상태",
+              header: "스테이터스 표시",
+              cell: (item: InstancesType) => (
+                <StatusIndicator type={showStatus(item.state).value}>
+                  {showStatus(item.state).label}
+                </StatusIndicator>
+              )
+            },
+            {
               id: "관리자",
-              header: "owner",
+              header: "관리자",
               cell: (item: InstancesType) => item.owner,
               width: '150px'
             },
             {
               id: "인스턴스 명",
-              header: "name",
+              header: "인스턴스 명",
               cell: (item: InstancesType) => item.name,
               width: '300px'
             },
@@ -223,9 +248,7 @@ const Search: FC = () => {
               header: "키페어 설치",
               cell: (item: InstancesType) => (
                 <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                  <Button style={{ backgroundColor: '#3c8700', color: 'white' }} onClick={() => { void downloadKeypair(item.uuid, item.name) }}>
-                    다운로드
-                  </Button>
+                  <ButtonScape className='greenButton' variant="primary" onClick={() => void downloadKeypair(item.id, item.name)}>다운로드</ButtonScape>
                 </div>
               ),
               width: '150px'
@@ -263,7 +286,7 @@ const Search: FC = () => {
             {
               id: "인스턴스 요금",
               header: "인스턴스 요금 표시",
-              cell: (item: InstancesType) => Number(item.pricePerHour) + (item.storageSize * 0.1),
+              cell: (item: InstancesType) => Number(item.pricePerHour) + (item.storageSize * 0.1) + "$",
               width: '100px'
             },
             {

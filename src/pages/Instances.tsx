@@ -10,19 +10,10 @@ import UpdateModal from '../components/UpdateModal'
 import { Body, Title, Top } from '../styles/globals'
 import { Link, useLocation } from 'react-router-dom'
 import { InstancesType } from '../utils/interfaces';
-import { StatusIndicator, StatusIndicatorProps } from '@cloudscape-design/components';
-
-function showStatus(status: number | undefined): { value: StatusIndicatorProps.Type | undefined, label: string } {
-  switch (String(status)) {
-    case "0": return { value: "pending", label: "Pending" }
-    case "16": return { value: "success", label: "Running" }
-    case "32": return { value: "loading", label: "Shutting-down" }
-    case "48": return { value: "error", label: "Terminated" }
-    case "64": return { value: "loading", label: "Stopping" }
-    case "80": return { value: "stopped", label: "Stopped" }
-    default: return { value: "error", label: "Error" }
-  }
-}
+import { Alert, StatusIndicator } from '@cloudscape-design/components';
+import showStatus from '../utils/showStatus';
+import io from 'socket.io-client'
+import toast from 'react-hot-toast'
 
 const Instances: FC = () => {
   const location = useLocation()
@@ -66,6 +57,18 @@ const Instances: FC = () => {
       }
     }).then((res) => {
       setPrices(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(res.data.body.storageSize) ? 0 : res.data.body.storageSize) * 0.1))
+    })
+  }, [])
+
+  useEffect(() => {
+    const socket = io('/')
+
+    socket.on('message', (data) => {
+      toast(() => (
+        <Alert type={data.type.toLowerCase()}>
+          {data.message}
+        </Alert>
+      ));
     })
   }, [])
 
@@ -134,7 +137,7 @@ const Instances: FC = () => {
     await axios('/api/invites', {
       method: 'POST',
       data: {
-        instanceUUID: uuid
+        instanceID: uuid
       }
     }).then((res) => {
       const $textarea = document.createElement('textarea')
@@ -142,7 +145,7 @@ const Instances: FC = () => {
       document.body.appendChild($textarea)
 
       // 복사할 특정 텍스트를 임시의 textarea에 넣어주고 모두 셀렉션 상태
-      $textarea.value = `${window.location.origin}/invites/${res.data.body.uuid as string}`
+      $textarea.value = `${window.location.origin}/invites/${res.data.body.id as string}`
       $textarea.select()
 
       // 복사 후 textarea 지우기
@@ -159,7 +162,7 @@ const Instances: FC = () => {
         <Title>인스턴스</Title>
         <div>
           <p>
-            {prices}$/월
+            총 {prices}$/월
           </p>
           <Link to={parseInt(page) + 1 > 1 ? `/instances?page=${parseInt(page) - 1}` : window.location.href}>
             <svg className={parseInt(page) + 1 > 1 ? 'enabled' : 'disabled'} width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet"><path fillRule="evenodd" clipRule="evenodd" d="M16.2071 19.7071C16.5976 19.3166 16.5976 18.6834 16.2071 18.2929L9.91421 12L16.2071 5.70711C16.5976 5.31658 16.5976 4.68342 16.2071 4.29289C15.8166 3.90237 15.1834 3.90237 14.7929 4.29289L7.79289 11.2929C7.40237 11.6834 7.40237 12.3166 7.79289 12.7071L14.7929 19.7071C15.1834 20.0976 15.8166 20.0976 16.2071 19.7071Z"></path></svg>
@@ -210,24 +213,24 @@ const Instances: FC = () => {
               id: "명령",
               header: "명령 표시",
               cell: (item: InstancesType) => (
-                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap', gap: '8px' }}>
-                  <ButtonScape className='greenButton' variant="primary" onClick={() => { void inviteInstance(item.uuid) }}>
+                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap', gap: '8px', lineBreak: 'auto' }}>
+                  <ButtonScape className='greenButton ButtonList' variant="primary" onClick={() => { void inviteInstance(item.id) }}>
                     초대링크 복사
                   </ButtonScape>
 
-                  <ButtonScape className='blueButton' variant="primary" onClick={() => { void restartInstance(item.uuid) }}>
+                  <ButtonScape className='blueButton ButtonList' variant="primary" onClick={() => { void restartInstance(item.id) }}>
                     재시작
                   </ButtonScape>
 
-                  <ButtonScape className='redButton' variant="primary" onClick={() => { void resetInstance(item.uuid) }}>
+                  <ButtonScape className='redButton ButtonList' variant="primary" onClick={() => { void resetInstance(item.id) }}>
                     초기화
                   </ButtonScape>
 
-                  <ButtonScape className='redButton' variant="primary" onClick={() => { void deleteInstance(item.uuid) }}>
+                  <ButtonScape className='redButton ButtonList' variant="primary" onClick={() => { void deleteInstance(item.id) }}>
                     삭제
                   </ButtonScape>
 
-                  <ButtonScape className='orangeButton' variant="primary" onClick={() => { void updateForm(item.uuid) }}>
+                  <ButtonScape className='orangeButton ButtonList' variant="primary" onClick={() => { void updateForm(item.id) }}>
                     수정
                   </ButtonScape>
                 </div>
@@ -260,7 +263,7 @@ const Instances: FC = () => {
               header: "키페어 설치",
               cell: (item: InstancesType) => (
                 <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                  <ButtonScape className='greenButton' variant="primary" onClick={() => void downloadKeypair(item.uuid, item.name)}>다운로드</ButtonScape>
+                  <ButtonScape className='greenButton' variant="primary" onClick={() => void downloadKeypair(item.id, item.name)}>다운로드</ButtonScape>
                 </div>
               ),
               width: '150px'
@@ -331,46 +334,6 @@ const TableMain = styled.div`
     width: 2850px !important;
     scroll-snap-type: both mandatory !important;
     font-size: 16px;
-  }
-
-  .blueButton {
-    background-color: #007dbc !important;
-    border-color: #007dbc !important;
-  }
-
-  .blueButton:hover {
-    background-color: #0972d3 !important;
-    border-color: #0972d3 !important;
-  }
-
-  .redButton {
-    background-color: #df3312 !important;
-    border-color: #df3312 !important;
-  }
-
-  .redButton:hover {
-    background-color: #d91515 !important;
-    border-color: #d91515 !important;
-  }
-
-  .orangeButton {
-    background-color: #ff9900 !important;
-    border-color: #ff9900 !important;
-  }
-
-  .orangeButton:hover {
-    background-color: #ec7211 !important;
-    border-color: #ec7211 !important;
-  }
-
-  .greenButton {
-    background-color: rgb(60, 135, 0) !important;
-    border-color: rgb(60, 135, 0) !important; 
-  }
-
-  .greenButton:hover {
-    background-color: #037f0c !important;
-    border-color: #037f0c !important; 
   }
 `;
 
