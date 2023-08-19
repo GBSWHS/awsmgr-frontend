@@ -64,5 +64,6 @@ export interface InstancesType {
   memo: string,
   keypairId: string,
   publicIP: string,
-  pricePerHour: number
+  pricePerHour: number,
+  status: number
 }
