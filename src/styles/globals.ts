@@ -37,6 +37,50 @@ export const GlobalStyles = createGlobalStyle`
   header, nav, div {
     display: block;
   }
+  
+  .ButtonList {
+    word-break: keep-all !important;
+  }
+
+  .blueButton {
+    background-color: #007dbc !important;
+    border-color: #007dbc !important;
+  }
+
+  .blueButton:hover {
+    background-color: #0972d3 !important;
+    border-color: #0972d3 !important;
+  }
+
+  .redButton {
+    background-color: #df3312 !important;
+    border-color: #df3312 !important;
+  }
+
+  .redButton:hover {
+    background-color: #d91515 !important;
+    border-color: #d91515 !important;
+  }
+
+  .orangeButton {
+    background-color: #ff9900 !important;
+    border-color: #ff9900 !important;
+  }
+
+  .orangeButton:hover {
+    background-color: #ec7211 !important;
+    border-color: #ec7211 !important;
+  }
+
+  .greenButton {
+    background-color: rgb(60, 135, 0) !important;
+    border-color: rgb(60, 135, 0) !important; 
+  }
+
+  .greenButton:hover {
+    background-color: #037f0c !important;
+    border-color: #037f0c !important; 
+  }
 `
 
 export const Body = styled.div`
