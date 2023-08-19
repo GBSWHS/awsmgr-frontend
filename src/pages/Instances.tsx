@@ -238,8 +238,8 @@ const Instances: FC = () => {
               id: "상태",
               header: "스테이터스 표시",
               cell: (item: InstancesType) => (
-                <StatusIndicator type={showStatus(item.status).value}>
-                  {showStatus(item.status).label}
+                <StatusIndicator type={showStatus(item.state).value}>
+                  {showStatus(item.state).label}
                 </StatusIndicator>
               )
             },

@@ -65,5 +65,5 @@ export interface InstancesType {
   keypairId: string,
   publicIP: string,
   pricePerHour: number,
-  status: number
+  state: number
 }
