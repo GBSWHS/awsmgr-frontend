@@ -53,7 +53,7 @@ export type InvitesAction =
   | { type: 'setIp', ip: string }
 
 export interface InstancesType {
-  uuid: string,
+  id: string,
   category: string,
   name: string,
   description: string,
