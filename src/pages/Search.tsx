@@ -110,7 +110,7 @@ const Search: FC = () => {
   }
 
   useEffect(() => {
-    const socket = io('/')
+    const socket = io(window.location.origin)
 
     socket.on('message', (data) => {
       toast(() => (
