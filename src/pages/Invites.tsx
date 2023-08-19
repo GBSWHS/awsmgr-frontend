@@ -1,7 +1,7 @@
 import { Body, Title, Top } from '../styles/globals'
 import Button from '../components/Button'
 import { useNavigate, useParams } from 'react-router-dom'
-import React, { type FC, useEffect, useReducer, useState } from 'react'
+import React, { type FC, useEffect, useReducer } from 'react'
 import axios from 'axios'
 import invitesReducer from '../modules/InvitesReducer'
 import { styled } from 'styled-components'
@@ -22,7 +22,6 @@ const Invites: FC = () => {
   })
   const { uuid } = useParams<{ uuid: string }>()
   const navigate = useNavigate()
-  const [hover, setHover] = useState('mouse-normal')
 
   if (uuid === undefined) {
     navigate('/login')

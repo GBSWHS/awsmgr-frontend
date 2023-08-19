@@ -8,7 +8,7 @@ const Login: FC = () => {
   const [password, setPassword] = useState<string>('')
   const navigate = useNavigate()
 
-  async function onSubmit (e: FormEvent<HTMLFormElement>): Promise<void> {
+  async function onSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault()
     setFetched(true)
 
@@ -71,7 +71,7 @@ const Body = styled.div`
 
   > div.background {
     transition: all 0.3s;
-    background-image: url(/src/assets/images/signin-background.png);
+    background-image: url(/assets/images/signin-background.png);
     background-repeat: no-repeat;
     background-position: bottom;
     -webkit-background-size: cover;
