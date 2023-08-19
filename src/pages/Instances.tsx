@@ -69,6 +69,10 @@ const Instances: FC = () => {
           {data.message}
         </Alert>
       ));
+
+      setTimeout(() => {
+        window.location.reload()
+      }, 888)
     })
   }, [])
 
