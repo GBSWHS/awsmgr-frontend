@@ -1,10 +1,12 @@
 import { Body, Title, Top } from '../styles/globals'
 import Button from '../components/Button'
 import { useNavigate, useParams } from 'react-router-dom'
-import { type FC, useEffect, useReducer, useState } from 'react'
+import React, { type FC, useEffect, useReducer, useState } from 'react'
 import axios from 'axios'
 import invitesReducer from '../modules/InvitesReducer'
 import { styled } from 'styled-components'
+import { Box, Container, Header, Link, SpaceBetween } from '@cloudscape-design/components'
+import ButtonCloudScape from '@cloudscape-design/components/button'
 
 const Invites: FC = () => {
   const [event, dispatch] = useReducer(invitesReducer, {
@@ -39,6 +41,7 @@ const Invites: FC = () => {
       dispatch({ type: 'setMemo', memo: res.data.body.memo })
       dispatch({ type: 'setPorts', ports: res.data.body.ports })
       dispatch({ type: 'setIp', ip: res.data.body.publicIP })
+      dispatch({ type: 'setType', instance: res.data.body.type })
     }).catch(() => {
       alert('인스턴스를 불러오는 중에 에러가 발생했습니다.\n')
       setTimeout(() => {
@@ -47,7 +50,7 @@ const Invites: FC = () => {
     })
   }, [uuid])
 
-  async function restartInstance (): Promise<void> {
+  async function restartInstance(): Promise<void> {
     if (confirm('정말 재시작 하시겠습니까?')) {
       await axios(`/api/invites/${uuid ?? ''}/restart`, {
         method: 'POST'
@@ -56,7 +59,7 @@ const Invites: FC = () => {
     }
   }
 
-  async function resetInstance (): Promise<void> {
+  async function resetInstance(): Promise<void> {
     if (confirm('정말 초기화 하시겠습니까?')) {
       await axios(`/api/invites/${uuid ?? ''}/reset`, {
         method: 'POST'
@@ -65,7 +68,7 @@ const Invites: FC = () => {
     }
   }
 
-  async function downloadKeypair (): Promise<void> {
+  async function downloadKeypair(): Promise<void> {
     await axios(`/api/invites/${uuid ?? ''}/keypair`, {
       method: 'GET'
     }).then((res) => {
@@ -93,24 +96,57 @@ const Invites: FC = () => {
       </Top>
       <Main>
         <Left>
-          <a href="https://aws.gbsw.hs.kr" style={{ display: 'block' }}>
-            <Image
-              className={hover}
-              onMouseEnter={() => { setHover('mouse-on') }}
-              onMouseLeave={() => { setHover('mouse-out') }} />
-            <br /><br />
-            <h2>GBSW AWS 메뉴얼</h2>
-          </a>
+          <Container
+            media={{
+              content: (
+                <img
+                  src="/src/assets/icon/ec2-1.png"
+                  alt="placeholder"
+                />
+              ),
+              position: "side",
+              width: "33%"
+            }}
+          >
+            <SpaceBetween direction="vertical" size="s">
+              <SpaceBetween direction="vertical" size="xxs">
+                <Box variant="h2">
+                  <Link fontSize="heading-m" href="https://aws.gbsw.hs.kr">
+                    GBSW AWS 메뉴얼
+                  </Link>
+                </Box>
+                <Box variant="small">경북소프트웨어고등학교</Box>
+              </SpaceBetween>
+              <Box variant="p">
+
+              </Box>
+              <SpaceBetween direction="vertical" size="xxs">
+                <Box fontWeight="bold">혹시 메뉴얼이 필요하신가요?</Box>
+              </SpaceBetween>
+              <ButtonCloudScape href="https://aws.gbsw.hs.kr" variant='primary' fullWidth>이동</ButtonCloudScape>
+            </SpaceBetween>
+          </Container>
         </Left>
         <Right>
-          <div>
-            {event.name}<br /><br />
-            server: {event.type}, SSD 주{event.storage}GB<br /><br />
-            Public Internet Protocol: {event.ip}<br /><br />
-            owner: {event.owner}<br /><br />
-            port: {event.ports}<br /><br />
-            * 추가는 관리자 문의
-          </div>
+          <Container
+            footer={
+              <React.Fragment>
+                {event.ip}
+                <br />
+                {event.ports}
+              </React.Fragment>
+            }
+            header={
+              <Header
+                variant="h2"
+                description={`${event.type} SSD ${event.storage}GB, ${event.owner}`}
+              >
+                {event.name}
+              </Header>
+            }
+          >
+            인스턴스 수정 관련은 관리자 문의
+          </Container>
         </Right>
       </Main>
     </Body>
@@ -140,11 +176,8 @@ const Left = styled.div`
     top:50%;
     transform: translate(-50%, -50%);
     text-align: center;
-  }
-
-  & > div:hover {
-    transition: .3s all;
-    top: 48%;
+    font-size: 22px;
+    max-width: 700px;
   }
 `
 
@@ -159,36 +192,6 @@ const Right = styled.div`
     transform: translate(-50%, -50%);
     text-align: center;
     font-size: 22px;
-  }
-`
-
-const Image = styled.div`
-  transition: 0.3s all;
-  width: 250px;
-  height: 250px;
-  cursor: pointer;
-
-  &.mouse-on, &.mouse-normal {
-    background-image: url(/src/assets/icon/ec2-2.png);
-  }
-
-  &.mouse-out {
-    background-image: url(/src/assets/icon/ec2-1.png);
-  }
-
-  &.mouse-on, &.mouse-normal, &.mouse-out {
-    background-size: cover;
-    background-repeat: no-repeat;
-  }
-
-  @media(max-width: 780px) {
-    &.mouse-on, &.mouse-normal, &.mouse-out {
-      background-image: url(/src/assets/icon/ec2-2.png);
-    }
-  
-    &.mouse-on, &.mouse-normal, &.mouse-out {
-      background-size: cover;
-      background-repeat: no-repeat;
-    }
+    max-width: 500px;
   }
 `

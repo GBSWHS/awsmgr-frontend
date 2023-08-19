@@ -1,6 +1,6 @@
 import { type InvitesAction, type InvitesState } from '../utils/interfaces'
 
-export default function invitesReducer (state: InvitesState, action: InvitesAction): any {
+export default function invitesReducer(state: InvitesState, action: InvitesAction): any {
   switch (action.type) {
     case 'setCategory':
       return { ...state, category: action.category }
