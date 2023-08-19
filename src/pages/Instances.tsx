@@ -329,6 +329,12 @@ const TableMain = styled.div`
   height: calc(100% - 45px);
   overflow: auto; /* Apply overflow to enable scrolling */
   scroll-snap-type: both mandatory;
+
+  table {
+    width: 2850px !important;
+    scroll-snap-type: both mandatory !important;
+    font-size: 16px;
+  }
 `
 
 export default Instances;
