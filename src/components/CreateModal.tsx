@@ -30,7 +30,7 @@ const CreateModal: FC<Props> = (props) => {
 
   async function getPrice(type: string, storage: number): Promise<void> {
     forceUpdate()
-    await axios.get(`/api/instances/price?instanceType=${type ?? 't3a.micro'}`)
+    await axios.get(`/api/prices/${type ?? 't3a.micro'}`)
       .then((res) => {
         setPrice(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(storage) ? 0 : storage) * 0.1))
       })
@@ -168,7 +168,7 @@ const CreateModal: FC<Props> = (props) => {
           기타메모
           <textarea onChange={(e) => { dispatch({ type: 'setMemo', memo: e.target.value }) }} value={event.memo}></textarea>
           <Bottom>
-            <h1>예상 금액: {price}$/월</h1>
+            <h1 style={{ marginRight: '10px' }}>예상 금액: {price}$/월</h1>
             <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void create() }}>생성</Button>
           </Bottom>
         </Form>

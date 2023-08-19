@@ -23,7 +23,7 @@ const UpdateModal: FC<Props> = (props) => {
 
   async function getPrice(type: string, storage: number): Promise<void> {
     forceUpdate()
-    await axios.get(`/api/instances/price?instanceType=${type ?? 't3a.micro'}`)
+    await axios.get(`/api/prices/${type ?? 't3a.micro'}`)
       .then((res) => {
         setPrice(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(storage) ? 0 : storage) * 0.1))
       })
@@ -61,7 +61,7 @@ const UpdateModal: FC<Props> = (props) => {
         owner: props.instance.owner,
         type: props.instance.type,
         storageSize: props.instance.storage,
-        ports: props.instance.ports.map(item => item.value).sort().join(','),
+        ports: props.instance.ports.sort().join(','),
         memo: props.instance.memo
       }
     }).then(() => {
@@ -159,7 +159,7 @@ const UpdateModal: FC<Props> = (props) => {
           기타메모
           <textarea value={props.instance.memo} onChange={(e) => { props.instanceAction({ type: 'setMemo', memo: e.target.value }) }}></textarea>
           <Bottom>
-            <h1>예상 금액: {price}$/월</h1>
+            <h1 style={{ marginRight: '10px' }}>예상 금액: {price}$/월</h1>
             <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void update() }}>{isIpChange ? '수정 후 재시작' : '수정'}</Button>
           </Bottom>
         </Form>
