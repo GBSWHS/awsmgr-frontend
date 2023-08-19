@@ -66,6 +66,10 @@ export const Top = styled.span`
       opacity: .3 !important;
     }
   }
+
+  p {
+    font-size: 16px;
+  }
 `
 
 export const Title = styled.p`
