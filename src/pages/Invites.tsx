@@ -87,7 +87,7 @@ const Invites: FC = () => {
     <Body>
       <Top>
         <Title>인스턴스</Title>
-        <div>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <Button style={{ backgroundColor: '#3c8700', color: 'white' }} onClick={() => { void downloadKeypair() }}>키 페어 설치</Button>
           <Button style={{ backgroundColor: '#007dbc', color: '#fff' }} onClick={() => { void restartInstance() }}>서버 재시작</Button>
           <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void resetInstance() }}>초기화</Button>
