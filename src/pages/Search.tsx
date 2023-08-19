@@ -54,6 +54,7 @@ const Search: FC = () => {
         method: 'DELETE'
       }).then(() => { alert('인스턴스가 삭제되었습니다.') })
         .catch(() => { alert('인스턴스를 삭제하는 도중 에러가 발생했습니다.') })
+      window.location.reload()
     }
   }
 
@@ -63,6 +64,7 @@ const Search: FC = () => {
         method: 'POST'
       }).then(() => { alert('인스턴스가 재시작 되었습니다.') })
         .catch(() => { alert('인스턴스를 재시작하는 도중 에러가 발생했습니다.') })
+      window.location.reload()
     }
   }
 
@@ -72,6 +74,7 @@ const Search: FC = () => {
         method: 'POST'
       }).then(() => { alert('인스턴스가 초기화 되었습니다.') })
         .catch(() => { alert('인스턴스를 초기화하는 도중 에러가 발생했습니다.') })
+      window.location.reload()
     }
   }
 
