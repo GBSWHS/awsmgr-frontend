@@ -4,16 +4,31 @@ import { type FC, useEffect, useReducer, useState } from 'react'
 import { styled } from 'styled-components'
 import CreateModal from '../components/CreateModal'
 import Button from '../components/Button'
+import ButtonScape from '@cloudscape-design/components/button';
 import updateModalReducer from '../modules/ModalReducer'
 import UpdateModal from '../components/UpdateModal'
 import { Body, Title, Top } from '../styles/globals'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { InstancesType } from '../utils/interfaces';
+import { StatusIndicator, StatusIndicatorProps } from '@cloudscape-design/components';
+
+function showStatus(status: number | undefined): { value: StatusIndicatorProps.Type | undefined, label: string } {
+  switch (String(status)) {
+    case "0": return { value: "pending", label: "Pending" }
+    case "16": return { value: "success", label: "Running" }
+    case "32": return { value: "loading", label: "Shutting-down" }
+    case "48": return { value: "error", label: "Terminated" }
+    case "64": return { value: "loading", label: "Stopping" }
+    case "80": return { value: "stopped", label: "Stopped" }
+    default: return { value: "error", label: "Error" }
+  }
+}
 
 const Instances: FC = () => {
   const location = useLocation()
   const serachParams = new URLSearchParams(location.search)
   const page = serachParams.get('page') ?? '0'
+  const [prices, setPrices] = useState(0);
   const [max, setMax] = useState(0)
   const [uuid, setUuid] = useState('')
   const [instances, setInstances] = useState([])
@@ -42,6 +57,17 @@ const Instances: FC = () => {
       setMax(res.data.body.pageCount)
     }).catch((err) => { console.error(err) })
   }, [serachParams.get('page')])
+
+  useEffect(() => {
+    axios('/api/prices', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      setPrices(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(res.data.body.storageSize) ? 0 : res.data.body.storageSize) * 0.1))
+    })
+  }, [])
 
   async function deleteInstance(uuid: string): Promise<void> {
     if (confirm('정말 삭제 하시겠습니까?')) {
@@ -132,13 +158,16 @@ const Instances: FC = () => {
       <Top>
         <Title>인스턴스</Title>
         <div>
-          <a href={parseInt(page) + 1 > 1 ? `/instances?page=${parseInt(page) - 1}` : window.location.href}>
+          <p>
+            {prices}$/월
+          </p>
+          <Link to={parseInt(page) + 1 > 1 ? `/instances?page=${parseInt(page) - 1}` : window.location.href}>
             <svg className={parseInt(page) + 1 > 1 ? 'enabled' : 'disabled'} width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet"><path fillRule="evenodd" clipRule="evenodd" d="M16.2071 19.7071C16.5976 19.3166 16.5976 18.6834 16.2071 18.2929L9.91421 12L16.2071 5.70711C16.5976 5.31658 16.5976 4.68342 16.2071 4.29289C15.8166 3.90237 15.1834 3.90237 14.7929 4.29289L7.79289 11.2929C7.40237 11.6834 7.40237 12.3166 7.79289 12.7071L14.7929 19.7071C15.1834 20.0976 15.8166 20.0976 16.2071 19.7071Z"></path></svg>
-          </a>
+          </Link>
           <a>{serachParams.get('page') !== null ? parseInt(page) + 1 : 1}</a>
-          <a href={parseInt(page) + 1 >= max ? window.location.href : `/instances?page=${parseInt(page) + 1}`}>
+          <Link to={parseInt(page) + 1 >= max ? window.location.href : `/instances?page=${parseInt(page) + 1}`}>
             <svg className={parseInt(page) + 1 >= max ? 'disabled' : 'enabled'} width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet"><path fillRule="evenodd" clipRule="evenodd" d="M7.79289 19.7071C7.40237 19.3166 7.40237 18.6834 7.79289 18.2929L14.0858 12L7.79289 5.70711C7.40237 5.31658 7.40237 4.68342 7.79289 4.29289C8.18342 3.90237 8.81658 3.90237 9.20711 4.29289L16.2071 11.2929C16.5976 11.6834 16.5976 12.3166 16.2071 12.7071L9.20711 19.7071C8.81658 20.0976 8.18342 20.0976 7.79289 19.7071Z"></path></svg>
-          </a>
+          </Link>
           <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { setCreateModal(true) }}>인스턴스 생성</Button>
         </div>
 
@@ -150,6 +179,7 @@ const Instances: FC = () => {
             { id: "카테고리", visible: true },
             { id: "목적", visible: true },
             { id: "명령", visible: true },
+            { id: "상태", visible: true },
             { id: "관리자", visible: true },
             { id: "인스턴스 명", visible: true },
             { id: "키페어", visible: true },
@@ -180,39 +210,48 @@ const Instances: FC = () => {
               id: "명령",
               header: "명령 표시",
               cell: (item: InstancesType) => (
-                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                  <Button style={{ backgroundColor: '#3c8700', color: '#fff' }} onClick={() => { void inviteInstance(item.uuid) }}>
+                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap', gap: '8px' }}>
+                  <ButtonScape className='greenButton' variant="primary" onClick={() => { void inviteInstance(item.uuid) }}>
                     초대링크 복사
-                  </Button>
+                  </ButtonScape>
 
-                  <Button style={{ backgroundColor: '#007dbc', color: '#fff' }} onClick={() => { void restartInstance(item.uuid) }}>
+                  <ButtonScape className='blueButton' variant="primary" onClick={() => { void restartInstance(item.uuid) }}>
                     재시작
-                  </Button>
+                  </ButtonScape>
 
-                  <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void resetInstance(item.uuid) }}>
+                  <ButtonScape className='redButton' variant="primary" onClick={() => { void resetInstance(item.uuid) }}>
                     초기화
-                  </Button>
+                  </ButtonScape>
 
-                  <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void deleteInstance(item.uuid) }}>
+                  <ButtonScape className='redButton' variant="primary" onClick={() => { void deleteInstance(item.uuid) }}>
                     삭제
-                  </Button>
+                  </ButtonScape>
 
-                  <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void updateForm(item.uuid) }}>
+                  <ButtonScape className='orangeButton' variant="primary" onClick={() => { void updateForm(item.uuid) }}>
                     수정
-                  </Button>
+                  </ButtonScape>
                 </div>
               ),
               width: '600px'
             },
             {
+              id: "상태",
+              header: "스테이터스 표시",
+              cell: (item: InstancesType) => (
+                <StatusIndicator type={showStatus(item.status).value}>
+                  {showStatus(item.status).label}
+                </StatusIndicator>
+              )
+            },
+            {
               id: "관리자",
-              header: "owner",
+              header: "관리자",
               cell: (item: InstancesType) => item.owner,
               width: '150px'
             },
             {
               id: "인스턴스 명",
-              header: "name",
+              header: "인스턴스 명",
               cell: (item: InstancesType) => item.name,
               width: '300px'
             },
@@ -221,9 +260,7 @@ const Instances: FC = () => {
               header: "키페어 설치",
               cell: (item: InstancesType) => (
                 <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                  <Button style={{ backgroundColor: '#3c8700', color: 'white' }} onClick={() => { void downloadKeypair(item.uuid, item.name) }}>
-                    다운로드
-                  </Button>
+                  <ButtonScape className='greenButton' variant="primary" onClick={() => void downloadKeypair(item.uuid, item.name)}>다운로드</ButtonScape>
                 </div>
               ),
               width: '150px'
@@ -261,7 +298,7 @@ const Instances: FC = () => {
             {
               id: "인스턴스 요금",
               header: "인스턴스 요금 표시",
-              cell: (item: InstancesType) => Number(item.pricePerHour) + (item.storageSize * 0.1),
+              cell: (item: InstancesType) => Number(item.pricePerHour) + (item.storageSize * 0.1) + "$",
               width: '100px'
             },
             {
@@ -294,6 +331,46 @@ const TableMain = styled.div`
     width: 2850px !important;
     scroll-snap-type: both mandatory !important;
     font-size: 16px;
+  }
+
+  .blueButton {
+    background-color: #007dbc !important;
+    border-color: #007dbc !important;
+  }
+
+  .blueButton:hover {
+    background-color: #0972d3 !important;
+    border-color: #0972d3 !important;
+  }
+
+  .redButton {
+    background-color: #df3312 !important;
+    border-color: #df3312 !important;
+  }
+
+  .redButton:hover {
+    background-color: #d91515 !important;
+    border-color: #d91515 !important;
+  }
+
+  .orangeButton {
+    background-color: #ff9900 !important;
+    border-color: #ff9900 !important;
+  }
+
+  .orangeButton:hover {
+    background-color: #ec7211 !important;
+    border-color: #ec7211 !important;
+  }
+
+  .greenButton {
+    background-color: rgb(60, 135, 0) !important;
+    border-color: rgb(60, 135, 0) !important; 
+  }
+
+  .greenButton:hover {
+    background-color: #037f0c !important;
+    border-color: #037f0c !important; 
   }
 `;
 
