@@ -56,7 +56,7 @@ const Instances: FC = () => {
         'Content-Type': 'application/json'
       }
     }).then((res) => {
-      setPrices(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(res.data.body.storageSize) ? 0 : res.data.body.storageSize) * 0.1))
+      setPrices(Math.floor((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(res.data.body.storageSize) ? 0 : res.data.body.storageSize) * 0.1))
     })
   }, [])
 
