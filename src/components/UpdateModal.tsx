@@ -18,14 +18,14 @@ const UpdateModal: FC<Props> = (props) => {
   const [, updateState] = useState<any>()
   const forceUpdate = useCallback(() => { updateState({}) }, [])
   const [status, setStatus] = useState("normal");
-  const [price, setPrice] = useState(0)
+  const [price, setPrice] = useState("0")
   const [isIpChange, setChange] = useState(false)
 
   async function getPrice(type: string, storage: number): Promise<void> {
     forceUpdate()
     await axios.get(`/api/prices/${type ?? 't3a.micro'}`)
       .then((res) => {
-        setPrice(Math.floor(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(storage) ? 0 : storage) * 0.1)))
+        setPrice(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(storage) ? 0 : storage) * 0.1).toFixed(2))
       })
       .catch((err) => { console.error(err) })
   }
