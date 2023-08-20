@@ -5,10 +5,13 @@ import { Toaster } from 'react-hot-toast'
 import Routers from './components/Routers'
 import SocketWatcher from './components/SocketWatcher'
 import { APIRefreshProvider } from './components/RefreshNotifier'
+import { AnimatePresence } from 'framer-motion'
 
 const App: FC = () =>
   <BrowserRouter>
-    <TopNav />
+    <AnimatePresence>
+      <TopNav />
+    </AnimatePresence>
 
     <APIRefreshProvider>
       <Routers />

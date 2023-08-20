@@ -2,6 +2,7 @@ import { useState, type FC, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import style from './style.module.scss'
 import { useCookie } from 'react-use'
+import { motion } from 'framer-motion'
 
 const TopNav: FC = () => {
   const [search, setSearch] = useState('')
@@ -30,7 +31,12 @@ const TopNav: FC = () => {
   }
 
   return (
-    <nav className={style.topNav}>
+    <motion.nav
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ bounce: 0, duration: 0.1 }}
+      className={style.topNav}>
       <div>
         <Link to="/instances">
           <img
@@ -62,7 +68,7 @@ const TopNav: FC = () => {
           로그아웃
         </button>
       </div>
-    </nav>
+    </motion.nav>
   )
 }
 
