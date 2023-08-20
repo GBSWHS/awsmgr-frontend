@@ -1,0 +1,99 @@
+.content {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  background-image: url('/assets/images/signin-background.png');
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: cover;
+
+  gap: 20px;
+
+  > div, > form {
+    max-width: 300px;
+  }
+
+  .logo {
+    width: 87px;
+  }
+
+  .form {
+    background-color: white;
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,0.3), 1px 1px 1px 0 rgba(0,28,36,0.15), -1px 1px 1px 0 rgba(0,28,36,0.15);
+    border-top: 1px solid #eaeded;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .header {
+      background-color: #fafafa;
+      border-bottom: 1px solid #eaeded;
+      padding: .7rem 1rem;
+
+      h1 {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      
+      p {
+        font-size: 12px;
+      }
+    }
+
+    .fields {
+      padding: 0px 20px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      .formItem {
+        font-size: 15px;
+        line-height: 1rem;
+        color: #16191f;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+  
+        > input {
+          width: 100%;
+          font-size: 14px;
+          padding: 0.55rem 0.5rem;
+          background-color: white;
+          border-radius: 2px;
+          border: 1px solid #aab7b8;
+        }
+      }
+  
+      .submitBtn {
+        width: 100%;
+        padding: 5px 0px;
+        cursor: pointer;
+        border: 1px solid #ff9900;
+        background-color: #ff9900;
+
+        &:hover {
+          background-color: #ec7211;
+          border-color: #ec7211;
+          text-decoration: none;
+        }
+
+        &:active {
+          background: #eb5f07;
+          border-color: #eb5f07;
+        }
+      }
+    }
+  }
+
+  .footer {
+    a {
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+  }
+}
