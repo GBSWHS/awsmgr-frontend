@@ -12,7 +12,7 @@ const Container: FC<Props> = ({ children }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ bounce: 0 }}
+      transition={{ bounce: 0, duration: 0.1 }}
       className={style.container}>
       {children}
     </motion.div>

@@ -7,7 +7,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'https://awsmgr.gbsw.hs.kr',
-      '/socket.io': 'https://awsmgr.gbsw.hs.kr'
+      '/socket.io': {
+        ws: true,
+        changeOrigin: true,
+        target: 'https://awsmgr.gbsw.hs.kr'
+      }
     }
   }
 })
