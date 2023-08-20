@@ -15,6 +15,7 @@ interface Props {
 
 const CreateModal: FC<Props> = ({ display, action }) => {
   const { refresh } = useRefreshNotifier()
+  const [isLoading, setIsLoading] = useState(false)
   const [, updateState] = useState<any>()
   const forceUpdate = useCallback(() => { updateState({}) }, [])
   const [price, setPrice] = useState(0)
@@ -62,6 +63,9 @@ const CreateModal: FC<Props> = ({ display, action }) => {
   }
 
   async function create (): Promise<void> {
+    if (isLoading) return
+    setIsLoading(true)
+
     forceUpdate()
     await axios('/api/instances', {
       method: 'POST',
@@ -81,6 +85,7 @@ const CreateModal: FC<Props> = ({ display, action }) => {
     })
 
     refresh()
+    setIsLoading(false)
     action(false)
   }
 
@@ -145,7 +150,7 @@ const CreateModal: FC<Props> = ({ display, action }) => {
         </div>
         <Bottom>
           <h1 style={{ marginRight: '10px' }}>예상 금액: {(price + storage * 0.1).toFixed(2)}$/월</h1>
-          <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void create() }}>생성</Button>
+          <Button disabled={isLoading} style={{ backgroundColor: '#ff9900' }} onClick={() => { void create() }}>{isLoading ? '생성중' : '생성'}</Button>
         </Bottom>
       </Form>
     </Modal>

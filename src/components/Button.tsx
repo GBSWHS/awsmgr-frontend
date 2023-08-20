@@ -7,6 +7,10 @@ const Button = styled.button`
   cursor: pointer;
   border-radius: 2px;
   font-weight: 900;
+
+  &:disabled {
+    opacity: 0.5;
+  }
 `
 
 export default Button

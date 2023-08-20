@@ -17,6 +17,7 @@ interface Props {
 }
 
 const UpdateModal: FC<Props> = ({ display, booleanAction, instance, instanceAction, uuid }) => {
+  const [isLoading, setIsLoading] = useState(false)
   const [, updateState] = useState<any>()
   const forceUpdate = useCallback(() => { updateState({}) }, [])
   const { refresh } = useRefreshNotifier()
@@ -50,6 +51,9 @@ const UpdateModal: FC<Props> = ({ display, booleanAction, instance, instanceActi
   }
 
   async function update (): Promise<void> {
+    if (isLoading) return
+    setIsLoading(true)
+
     forceUpdate()
     await axios(`/api/instances/${uuid}`, {
       method: 'PUT',
@@ -70,6 +74,7 @@ const UpdateModal: FC<Props> = ({ display, booleanAction, instance, instanceActi
 
     refresh()
     booleanAction(false)
+    setIsLoading(false)
   }
 
   return (
@@ -131,7 +136,7 @@ const UpdateModal: FC<Props> = ({ display, booleanAction, instance, instanceActi
           </div>
           <Bottom>
             <h1 style={{ marginRight: '10px' }}>예상 금액: {(price + storage * 0.1).toFixed(2)}$/월</h1>
-            <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void update() }}>{isIpChange ? '수정 후 재시작' : '수정'}</Button>
+            <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void update() }}>{isLoading ? '수정중.' : (isIpChange ? '수정 후 재시작' : '수정')}</Button>
           </Bottom>
         </Form>
     </Modal>

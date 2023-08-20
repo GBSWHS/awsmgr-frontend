@@ -64,7 +64,15 @@ const TopNav: FC = () => {
       </div>
 
       <div>
-        <button className={style.logout} onClick={onLogout}>
+        <a className={style.text} href="https://aws.gbsw.hs.kr" target="_blank" rel="noreferrer">
+          메뉴얼
+        </a>
+
+        <a className={style.text} href="https://github.com/GBSWHS" target="_blank" rel="noreferrer">
+          개발자
+        </a>
+
+        <button className={style.text} onClick={onLogout}>
           로그아웃
         </button>
       </div>

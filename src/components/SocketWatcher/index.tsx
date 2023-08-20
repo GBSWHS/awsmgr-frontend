@@ -15,10 +15,16 @@ const SocketWatcher: FC = () => {
     })
 
     socket.on('message', (data) => {
-      toast(() => (
-        <Alert type={data.type.toLowerCase()}>
-          {data.message}
-        </Alert>
+      toast.custom((t) => (
+        <div style={{
+          opacity: t.visible ? 1 : 0,
+          transition: 'opacity 100ms ease-in-out'
+        }}>
+          <Alert type={data.type.toLowerCase()}>
+            {data.message}
+            {data?.error}
+          </Alert>
+        </div>
       ))
 
       refresh()

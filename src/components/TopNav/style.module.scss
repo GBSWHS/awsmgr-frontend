@@ -66,11 +66,13 @@
     }
   }
 
-  .logout {
+  .text {
     background-color: transparent;
     border: none;
     color: white;
     cursor: pointer;
+    height: auto;
+    word-break: keep-all;
     text-decoration: underline dashed rgb(135, 149, 150);
 
     &:hover {
