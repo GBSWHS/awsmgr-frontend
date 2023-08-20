@@ -5,6 +5,7 @@ import axios from 'axios'
 import Button from './Button'
 import { type ModalAction, type ModalState } from '../utils/interfaces'
 import { Alert } from '@cloudscape-design/components'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   display: boolean
@@ -17,21 +18,23 @@ interface Props {
 const UpdateModal: FC<Props> = (props) => {
   const [, updateState] = useState<any>()
   const forceUpdate = useCallback(() => { updateState({}) }, [])
+  const navigate = useNavigate()
   const [status, setStatus] = useState("normal");
-  const [price, setPrice] = useState("0")
+  const [price, setPrice] = useState(0)
+  const [storage, setStorage] = useState(0)
   const [isIpChange, setChange] = useState(false)
 
-  async function getPrice(type: string, storage: number): Promise<void> {
+  async function getPrice(type: string): Promise<void> {
     forceUpdate()
     await axios.get(`/api/prices/${type ?? 't3a.micro'}`)
       .then((res) => {
-        setPrice(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(storage) ? 0 : storage) * 0.1).toFixed(2))
+        setPrice(res.data.body.pricePerHour * 24 * 30)
       })
       .catch((err) => { console.error(err) })
   }
 
   useEffect(() => {
-    void getPrice(props.instance.type, props.instance.storage)
+    void getPrice(props.instance.type)
   }, [price])
 
   function portEnter(e: any): void {
@@ -66,7 +69,7 @@ const UpdateModal: FC<Props> = (props) => {
       }
     }).then(() => {
       setStatus("success");
-      window.location.reload()
+      navigate('/')
     }).catch(() => { setStatus('error') })
   }
 
@@ -125,14 +128,14 @@ const UpdateModal: FC<Props> = (props) => {
           <input className="input" disabled value={props.instance.name} onChange={(e) => { props.instanceAction({ type: 'setName', name: e.target.value }) }} placeholder="이름 | (예: capstone-2023-1-4)"></input>
           <input className="input" value={props.instance.description} onChange={(e) => { props.instanceAction({ type: 'setDescription', description: e.target.value }) }} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input>
           <input className="input" value={props.instance.owner} onChange={(e) => { props.instanceAction({ type: 'setOwner', owner: e.target.value }) }} placeholder="관리자 | (예: 박민혁)"></input>
-          <input className="input" value={props.instance.type} onChange={(e) => { setChange(true); props.instanceAction({ type: 'setType', instance: e.target.value }); void getPrice(e.target.value, props.instance.storage) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
+          <input className="input" value={props.instance.type} onChange={(e) => { setChange(true); props.instanceAction({ type: 'setType', instance: e.target.value }); void getPrice(e.target.value) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
           <datalist id="typeList" defaultValue={'t3a.micro'}>
             <option value={'t3a.micro'}>t3a.micro</option>
             <option value={'t3a.nano'}>t3a.nano</option>
             <option value={'t3a.small'}>t3a.small</option>
             <option value={'t2.nano'}>t2.nano</option>
           </datalist>
-          <label><input className="input ssd" value={props.instance.storage} onChange={(e) => { setChange(true); props.instanceAction({ type: 'setStorage', storage: parseInt(e.target.value) }); void getPrice(props.instance.type, parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB</label>
+          <label><input min={8} className="input ssd" value={props.instance.storage} onChange={(e) => { setChange(true); props.instanceAction({ type: 'setStorage', storage: parseInt(e.target.value) }); setStorage(parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB</label>
           <CreatableSelect
             value={props.instance.ports.map((value) => { return { label: value, value } })}
             className="createSelect"
@@ -159,7 +162,7 @@ const UpdateModal: FC<Props> = (props) => {
           기타메모
           <textarea value={props.instance.memo} onChange={(e) => { props.instanceAction({ type: 'setMemo', memo: e.target.value }) }}></textarea>
           <Bottom>
-            <h1 style={{ marginRight: '10px' }}>예상 금액: {price}$/월</h1>
+            <h1 style={{ marginRight: '10px' }}>예상 금액: {(price + storage * 0.1).toFixed(2)}$/월</h1>
             <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void update() }}>{isIpChange ? '수정 후 재시작' : '수정'}</Button>
           </Bottom>
         </Form>

@@ -1,13 +1,25 @@
-import { useState, type FC } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useState, type FC, FormEvent } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { styled } from 'styled-components'
 
 const Header: FC = () => {
   const [search, setSearch] = useState('')
   const location = useLocation()
+  const navigate = useNavigate()
 
   if (location.pathname === '/login')
     return <></>
+
+  const onSearch = (e: FormEvent): void => {
+    e.preventDefault()
+
+    if (search.length < 1) {
+      navigate('/instances/')
+      return
+    }
+
+    navigate(`/instances/search/${search}?page=0`)
+  }
 
   return (
     <>
@@ -34,7 +46,7 @@ const Header: FC = () => {
                       </svg>
                     </label>
                     <div>
-                      <form action={search === '' ? '/instances/' : `/instances/search/${search}?page=0`}>
+                      <form onSubmit={onSearch}>
                         <input type="text" autoComplete="off" spellCheck="false" aria-haspopup="dialog" id="search" placeholder="검색" role="combobox" onChange={(e) => { setSearch(e.target.value) }} />
                       </form>
                     </div>

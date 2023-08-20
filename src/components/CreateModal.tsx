@@ -5,6 +5,7 @@ import CreatableSelect from 'react-select/creatable'
 import axios from 'axios'
 import Button from './Button'
 import { Alert } from '@cloudscape-design/components'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   display: boolean
@@ -12,10 +13,12 @@ interface Props {
 }
 
 const CreateModal: FC<Props> = (props) => {
+  const navigate = useNavigate()
   const [, updateState] = useState<any>()
   const forceUpdate = useCallback(() => { updateState({}) }, [])
   const [status, setStatus] = useState("normal");
-  const [price, setPrice] = useState("0")
+  const [price, setPrice] = useState(0)
+  const [storage, setStorage] = useState(8)
   const [event, dispatch] = useReducer(createModalReducer, {
     category: '',
     name: '',
@@ -28,17 +31,17 @@ const CreateModal: FC<Props> = (props) => {
     memo: ''
   })
 
-  async function getPrice(type: string, storage: number): Promise<void> {
+  async function getPrice(type: string): Promise<void> {
     forceUpdate()
     await axios.get(`/api/prices/${type ?? 't3a.micro'}`)
       .then((res) => {
-        setPrice(((res.data.body.pricePerHour * 24) * 30) + ((Number.isNaN(storage) ? 0 : storage) * 0.1).toFixed(2))
+        setPrice(res.data.body.pricePerHour * 24 * 30)
       })
       .catch((err) => { console.error(err) })
   }
 
   useEffect(() => {
-    void getPrice(event.type, event.storage)
+    void getPrice(event.type)
   }, [])
 
   function portEnter(e: any): void {
@@ -73,10 +76,8 @@ const CreateModal: FC<Props> = (props) => {
       }
     }).then(() => {
       setStatus("success");
-      setTimeout(() => {
-        window.location.reload()
-      }, 800)
-    }).catch(() => { setStatus("error") })
+      navigate('/')
+   }).catch(() => { setStatus("error") })
   }
 
   return (
@@ -141,7 +142,7 @@ const CreateModal: FC<Props> = (props) => {
             <option value={'t3a.small'}>t3a.small</option>
             <option value={'t2.nano'}>t2.nano</option>
           </datalist>
-          <label><input className="input ssd" value={event.storage} onChange={(e) => { dispatch({ type: 'setStorage', storage: parseInt(e.target.value) }); void getPrice(event.type, parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB</label>
+          <label><input min={8} className="input ssd" value={event.storage} onChange={(e) => { dispatch({ type: 'setStorage', storage: parseInt(e.target.value) }); setStorage(parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB</label>
           <CreatableSelect
             className="createSelect"
             components={{ DropdownIndicator: null }}
@@ -168,7 +169,7 @@ const CreateModal: FC<Props> = (props) => {
           기타메모
           <textarea onChange={(e) => { dispatch({ type: 'setMemo', memo: e.target.value }) }} value={event.memo}></textarea>
           <Bottom>
-            <h1 style={{ marginRight: '10px' }}>예상 금액: {price}$/월</h1>
+            <h1 style={{ marginRight: '10px' }}>예상 금액: {(price + storage * 0.1).toFixed(2)}$/월</h1>
             <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void create() }}>생성</Button>
           </Bottom>
         </Form>

@@ -38,7 +38,7 @@ export const GlobalStyles = createGlobalStyle`
     display: block;
   }
   
-  .ButtonList {
+  button {
     word-break: keep-all !important;
   }
 

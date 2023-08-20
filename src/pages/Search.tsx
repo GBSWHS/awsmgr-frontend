@@ -166,7 +166,7 @@ const Search: FC = () => {
   return (
     <Body>
       <Top>
-        <Title>인스턴스</Title>
+        <Title>인스턴스: &quot;{search}&quot; 검색 결과</Title>
         <div>
           <p>
             총 {prices}$/월

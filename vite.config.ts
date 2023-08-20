@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'https://awsmgr.gbsw.hs.kr'
+      '/api': 'https://awsmgr.gbsw.hs.kr',
+      '/socket.io': 'https://awsmgr.gbsw.hs.kr'
     }
   }
 })

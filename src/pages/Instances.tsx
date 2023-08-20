@@ -25,6 +25,7 @@ const Instances: FC = () => {
   const [instances, setInstances] = useState([])
   const [createModalStatus, setCreateModal] = useState(false)
   const [updateModalStatus, setUpdateModal] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [event, dispatch] = useReducer(updateModalReducer, {
     category: '',
     name: '',
@@ -38,6 +39,7 @@ const Instances: FC = () => {
   })
 
   useEffect(() => {
+    setIsLoading(true)
     axios(`/api/instances?take=10&skip=${parseInt(String(serachParams.get('page') !== null ? page : '0')) * 10}`, {
       method: 'GET',
       headers: {
@@ -46,6 +48,7 @@ const Instances: FC = () => {
     }).then((res) => {
       setInstances(res.data.body.instances)
       setMax(res.data.body.pageCount)
+      setIsLoading(false)
     }).catch((err) => { console.error(err) })
   }, [serachParams.get('page')])
 
@@ -185,6 +188,7 @@ const Instances: FC = () => {
 
       <TableMain>
         <Table
+          variant="full-page"
           columnDisplay={[
             { id: "카테고리", visible: true },
             { id: "목적", visible: true },
@@ -218,9 +222,9 @@ const Instances: FC = () => {
             },
             {
               id: "명령",
-              header: "명령 표시",
+              header: "-",
               cell: (item: InstancesType) => (
-                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap', gap: '8px', lineBreak: 'auto' }}>
+                <div style={{ display: 'flex', flexWrap: 'nowrap', gap: '8px', lineBreak: 'auto' }}>
                   <ButtonScape className='greenButton ButtonList' variant="primary" onClick={() => { void inviteInstance(item.id) }}>
                     초대링크 복사
                   </ButtonScape>
@@ -242,11 +246,11 @@ const Instances: FC = () => {
                   </ButtonScape>
                 </div>
               ),
-              width: '600px'
+              width: '550px'
             },
             {
               id: "상태",
-              header: "스테이터스 표시",
+              header: "상태",
               cell: (item: InstancesType) => (
                 <StatusIndicator type={showStatus(item.state).value}>
                   {showStatus(item.state).label}
@@ -301,27 +305,28 @@ const Instances: FC = () => {
             },
             {
               id: "포트",
-              header: "포트 표시",
+              header: "열려있는 포트",
               cell: (item: InstancesType) => item.ports,
               width: '300px'
             },
             {
               id: "인스턴스 요금",
-              header: "인스턴스 요금 표시",
+              header: "인스턴스 요금",
               cell: (item: InstancesType) => Number(item.pricePerHour) + (item.storageSize * 0.1) + "$",
-              width: '100px'
+              width: '200px'
             },
             {
               id: "메모",
-              header: "메모 표시",
+              header: "메모",
               cell: (item: InstancesType) => item.memo,
               width: '600px'
             }
           ]}
 
           items={instances}
+          loading={isLoading}
 
-          loadingText="Loading resources"
+          loadingText="인스턴스를 불러오는 중..."
         />
       </TableMain>
       <UpdateModal display={updateModalStatus} booleanAction={setUpdateModal} instance={event} instanceAction={dispatch} uuid={uuid}></UpdateModal>
