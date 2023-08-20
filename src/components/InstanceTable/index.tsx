@@ -19,6 +19,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
   const { refresh } = useRefreshNotifier()
   const [uuid, setUuid] = useState('')
   const [updateModalStatus, setUpdateModal] = useState(false)
+  const [isUpdateLoading, setIsUpdateLoading] = useState(false)
   const [event, dispatch] = useReducer(updateModalReducer, {
     category: '',
     name: '',
@@ -81,6 +82,11 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
   }
 
   async function updateForm (uuid: string): Promise<void> {
+    if (isUpdateLoading)
+      return
+
+    setIsUpdateLoading(true)
+
     await axios(`/api/instances/${uuid}`, {
       method: 'GET'
     }).then((res) => {
@@ -96,6 +102,8 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
     }).catch((err) => {
       console.error(err)
     })
+
+    setIsUpdateLoading(false)
   }
 
   async function inviteInstance (uuid: string): Promise<void> {
@@ -167,8 +175,8 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
                     삭제
                   </Button>
 
-                  <Button className='orangeButton ButtonList' variant="primary" onClick={() => { void updateForm(item.id) }}>
-                    수정
+                  <Button disabled={isUpdateLoading} className='orangeButton ButtonList' variant="primary" onClick={() => { void updateForm(item.id) }}>
+                    {isUpdateLoading ? '...' : '수정'}
                   </Button>
                 </div>
               ),
