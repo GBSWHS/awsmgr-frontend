@@ -45,7 +45,12 @@ const TopNav: FC = () => {
                 src="/assets/icon/search.svg"
                 alt="Search" className={style.searchIcon} />
 
-              <input type="text" autoComplete="off" spellCheck="false" aria-haspopup="dialog" id="search" placeholder="검색" role="combobox" onChange={(e) => { setSearch(e.target.value) }} />
+              <input
+                type="text"
+                autoComplete="off"
+                spellCheck="false"
+                placeholder="인스턴스 검색"
+                onChange={(e) => { setSearch(e.target.value) }} />
             </label>
           </form>
         )}
