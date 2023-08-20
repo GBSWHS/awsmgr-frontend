@@ -2,8 +2,9 @@
   display: flex;
   align-items: center;
   font-size: 20px;
-  height: 25px;
+  min-height: 25px;
   gap: 20px;
+  flex-wrap: wrap;
 
   h1 {
     flex-grow: 1;
