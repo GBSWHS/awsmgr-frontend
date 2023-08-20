@@ -1,4 +1,4 @@
-import { StatusIndicator, Table } from '@cloudscape-design/components'
+import { Alert, StatusIndicator, Table } from '@cloudscape-design/components'
 import { useReducer, type FC, useState } from 'react'
 import { type InstancesType } from '../../utils/interfaces'
 import Button from '@cloudscape-design/components/button'
@@ -9,6 +9,7 @@ import showStatus from '../../utils/showStatus'
 import { useRefreshNotifier } from '../RefreshNotifier'
 
 import style from './style.module.scss'
+import { toast } from 'react-hot-toast'
 
 interface Props {
   instances: InstancesType[]
@@ -19,6 +20,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
   const { refresh } = useRefreshNotifier()
   const [uuid, setUuid] = useState('')
   const [updateModalStatus, setUpdateModal] = useState(false)
+  const [isInviteLoading, setIsInviteLoading] = useState(false)
   const [isUpdateLoading, setIsUpdateLoading] = useState(false)
   const [event, dispatch] = useReducer(updateModalReducer, {
     category: '',
@@ -107,6 +109,9 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
   }
 
   async function inviteInstance (uuid: string): Promise<void> {
+    if (isInviteLoading) return
+    setIsInviteLoading(true)
+
     await axios('/api/invites', {
       method: 'POST',
       data: {
@@ -114,8 +119,19 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
       }
     }).then((res) => {
       void navigator.clipboard.writeText(`${window.location.origin}/invites/${res.data.body.id as string}`)
-      alert('초대링크를 복사했습니다.')
+      toast.custom((t) => (
+        <div style={{
+          opacity: t.visible ? 1 : 0,
+          transition: 'opacity 100ms ease-in-out'
+        }}>
+          <Alert type='success'>
+            초대 링크를 복사했습니다!
+          </Alert>
+        </div>
+      ))
     })
+
+    setIsInviteLoading(false)
   }
 
   return (
@@ -160,7 +176,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
               cell: (item: InstancesType) => (
                 <div style={{ display: 'flex', flexWrap: 'nowrap', gap: '8px', lineBreak: 'auto' }}>
                   <Button className='greenButton ButtonList' variant="primary" onClick={() => { void inviteInstance(item.id) }}>
-                    초대링크 복사
+                    {isInviteLoading ? '생성 중...' : '초대링크 복사'}
                   </Button>
 
                   <Button className='blueButton ButtonList' variant="primary" onClick={() => { void restartInstance(item.id) }}>

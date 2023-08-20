@@ -7,6 +7,7 @@ import invitesReducer from '../modules/InvitesReducer'
 import { styled } from 'styled-components'
 import { Box, Container, Header, Link, SpaceBetween } from '@cloudscape-design/components'
 import ButtonCloudScape from '@cloudscape-design/components/button'
+import ContainerComponent from '../components/Container'
 
 const Invites: FC = () => {
   const [event, dispatch] = useReducer(invitesReducer, {
@@ -84,71 +85,74 @@ const Invites: FC = () => {
   }
 
   return (
-    <Body>
-      <Top>
-        <Title>인스턴스</Title>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <Button style={{ backgroundColor: '#3c8700', color: 'white' }} onClick={() => { void downloadKeypair() }}>키 페어 설치</Button>
-          <Button style={{ backgroundColor: '#007dbc', color: '#fff' }} onClick={() => { void restartInstance() }}>서버 재시작</Button>
-          <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void resetInstance() }}>초기화</Button>
-        </div>
-      </Top>
-      <Main>
-        <Left>
-          <Container
-            media={{
-              content: (
-                <img
-                  src="/assets/icon/ec2-1.png"
-                  alt="placeholder"
-                />
-              ),
-              position: 'side',
-              width: '33%'
-            }}
-          >
-            <SpaceBetween direction="vertical" size="s">
-              <SpaceBetween direction="vertical" size="xxs">
-                <Box variant="h2">
-                  <Link fontSize="heading-m" href="https://aws.gbsw.hs.kr">
-                    GBSW AWS 메뉴얼
-                  </Link>
-                </Box>
-                <Box variant="small">경북소프트웨어고등학교</Box>
-              </SpaceBetween>
-              <Box variant="p">
+    <ContainerComponent>
+      <Body>
+        <Top>
+          <Title>인스턴스</Title>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button style={{ backgroundColor: '#3c8700', color: 'white' }} onClick={() => { void downloadKeypair() }}>키 페어 설치</Button>
+            <Button style={{ backgroundColor: '#007dbc', color: '#fff' }} onClick={() => { void restartInstance() }}>서버 재시작</Button>
+            <Button style={{ backgroundColor: '#df3312', color: '#fff' }} onClick={() => { void resetInstance() }}>초기화</Button>
+          </div>
+        </Top>
+        <Main>
+          <Left>
+            <Container
+              media={{
+                content: (
+                  <img
+                    src="/assets/icon/ec2-1.png"
+                    alt="placeholder"
+                  />
+                ),
+                position: 'side',
+                width: '33%'
+              }}
+            >
+              <SpaceBetween direction="vertical" size="s">
+                <SpaceBetween direction="vertical" size="xxs">
+                  <Box variant="h2">
+                    <Link fontSize="heading-m" href="https://aws.gbsw.hs.kr">
+                      GBSW AWS 메뉴얼
+                    </Link>
+                  </Box>
+                  <Box variant="small">경북소프트웨어고등학교</Box>
+                </SpaceBetween>
+                <Box variant="p">
 
-              </Box>
-              <SpaceBetween direction="vertical" size="xxs">
-                <Box fontWeight="bold">혹시 메뉴얼이 필요하신가요?</Box>
+                </Box>
+                <SpaceBetween direction="vertical" size="xxs">
+                  <Box fontWeight="bold">혹시 메뉴얼이 필요하신가요?</Box>
+                </SpaceBetween>
+                <ButtonCloudScape href="https://aws.gbsw.hs.kr" variant='primary' fullWidth>이동</ButtonCloudScape>
               </SpaceBetween>
-              <ButtonCloudScape href="https://aws.gbsw.hs.kr" variant='primary' fullWidth>이동</ButtonCloudScape>
-            </SpaceBetween>
-          </Container>
-        </Left>
-        <Right>
-          <Container
-            footer={
-              <React.Fragment>
-                {event.ip}
-                <br />
-                {event.ports}
-              </React.Fragment>
-            }
-            header={
-              <Header
-                variant="h2"
-                description={`${event.type as string} SSD ${event.storage as string}GB, ${event.owner as string}`}
-              >
-                {event.name}
-              </Header>
-            }
-          >
-            인스턴스 수정 관련은 관리자 문의
-          </Container>
-        </Right>
-      </Main>
-    </Body>
+            </Container>
+          </Left>
+          <Right>
+            <Container
+              footer={
+                <React.Fragment>
+                  IP 주소: {event.ip}<br />
+                  열린 포트: {event.ports}<br />
+                  유저 아이디: ubuntu
+                </React.Fragment>
+              }
+              header={
+                <Header
+                  variant="h2"
+                  description={`${event.type as string} SSD ${event.storage as string}GB, ${event.owner as string}`}
+                >
+                  {event.name}
+                </Header>
+              }
+            >
+              인스턴스 수정 관련은 관리자 문의
+            </Container>
+          </Right>
+        </Main>
+      </Body>
+
+    </ContainerComponent>
   )
 }
 

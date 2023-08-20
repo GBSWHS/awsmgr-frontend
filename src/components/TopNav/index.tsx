@@ -72,9 +72,11 @@ const TopNav: FC = () => {
           개발자
         </a>
 
-        <button className={style.text} onClick={onLogout}>
-          로그아웃
-        </button>
+        {isSearchablePage && (
+          <button className={style.text} onClick={onLogout}>
+            로그아웃
+          </button>
+        )}
       </div>
     </motion.nav>
   )
