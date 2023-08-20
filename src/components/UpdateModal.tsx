@@ -19,12 +19,12 @@ const UpdateModal: FC<Props> = (props) => {
   const [, updateState] = useState<any>()
   const forceUpdate = useCallback(() => { updateState({}) }, [])
   const navigate = useNavigate()
-  const [status, setStatus] = useState("normal");
+  const [status, setStatus] = useState('normal')
   const [price, setPrice] = useState(0)
   const [storage, setStorage] = useState(0)
   const [isIpChange, setChange] = useState(false)
 
-  async function getPrice(type: string): Promise<void> {
+  async function getPrice (type: string): Promise<void> {
     forceUpdate()
     await axios.get(`/api/prices/${type ?? 't3a.micro'}`)
       .then((res) => {
@@ -37,9 +37,9 @@ const UpdateModal: FC<Props> = (props) => {
     void getPrice(props.instance.type)
   }, [price])
 
-  function portEnter(e: any): void {
+  function portEnter (e: any): void {
     if (e.keyCode === 13 || e.keyCode === 32) {
-      const exists = props.instance.ports.some((item: any) => item.value === props.instance.port.replace(/\D/g, '')) as boolean
+      const exists = props.instance.ports.some((item: any) => item.value === props.instance.port.replace(/\D/g, ''))
       if (!exists) {
         props.instanceAction({ type: 'setPort', port: '' })
         props.instanceAction({
@@ -49,9 +49,9 @@ const UpdateModal: FC<Props> = (props) => {
     }
   }
 
-  async function update(): Promise<void> {
+  async function update (): Promise<void> {
     forceUpdate()
-    setStatus("loading");
+    setStatus('loading')
     await axios(`/api/instances/${props.uuid}`, {
       method: 'PUT',
       headers: {
@@ -64,11 +64,11 @@ const UpdateModal: FC<Props> = (props) => {
         owner: props.instance.owner,
         type: props.instance.type,
         storageSize: props.instance.storage,
-        ports: props.instance.ports.sort().join(','),
+        ports: props.instance.ports.sort((a, b) => (a.value > b.value ? -1 : 1)).join(','),
         memo: props.instance.memo
       }
     }).then(() => {
-      setStatus("success");
+      setStatus('success')
       navigate('/')
     }).catch(() => { setStatus('error') })
   }
@@ -76,11 +76,10 @@ const UpdateModal: FC<Props> = (props) => {
   return (
     <Body style={{ display: props.display ? 'block' : 'none' }}>
       <Main>
-        {status === "normal" ?
-          <></>
-          :
-          status === "success" ?
-            <Alert
+        {status === 'normal'
+          ? <></>
+          : status === 'success'
+            ? <Alert
               dismissible
               statusIconAriaLabel="Success"
               type="success"
@@ -92,9 +91,8 @@ const UpdateModal: FC<Props> = (props) => {
             >
               잠시 후 새로고침 됩니다.
             </Alert>
-            :
-            status === "error" ?
-              <Alert
+            : status === 'error'
+              ? <Alert
                 statusIconAriaLabel="Error"
                 type="error"
                 header={
@@ -105,8 +103,7 @@ const UpdateModal: FC<Props> = (props) => {
               >
                 잠시 후 다시시도 해주세요!
               </Alert>
-              :
-              <Alert
+              : <Alert
                 statusIconAriaLabel="Warning"
                 type="warning"
                 header={

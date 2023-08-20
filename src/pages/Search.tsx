@@ -9,7 +9,7 @@ import UpdateModal from '../components/UpdateModal'
 import { Body, Title, Top } from '../styles/globals'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { Alert, StatusIndicator, Table } from '@cloudscape-design/components'
-import { InstancesType } from '../utils/interfaces'
+import { type InstancesType } from '../utils/interfaces'
 import showStatus from '../utils/showStatus'
 import { toast } from 'react-hot-toast'
 import { io } from 'socket.io-client'
@@ -19,7 +19,7 @@ const Search: FC = () => {
   const location = useLocation()
   const serachParams = new URLSearchParams(location.search)
   const page = serachParams.get('page') ?? '0'
-  const [prices, setPrices] = useState(0);
+  const [prices, setPrices] = useState(0)
   const [max, setMax] = useState(0)
   const [uuid, setUuid] = useState('')
   const [instances, setInstances] = useState([])
@@ -50,7 +50,7 @@ const Search: FC = () => {
   }, [serachParams.get('page')])
 
   useEffect(() => {
-    axios('/api/prices', {
+    void axios('/api/prices', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ const Search: FC = () => {
     })
   }, [])
 
-  async function deleteInstance(uuid: string): Promise<void> {
+  async function deleteInstance (uuid: string): Promise<void> {
     if (confirm('정말 삭제 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}`, {
         method: 'DELETE'
@@ -70,7 +70,7 @@ const Search: FC = () => {
     }
   }
 
-  async function restartInstance(uuid: string): Promise<void> {
+  async function restartInstance (uuid: string): Promise<void> {
     if (confirm('정말 재시작 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}/restart`, {
         method: 'POST'
@@ -80,7 +80,7 @@ const Search: FC = () => {
     }
   }
 
-  async function resetInstance(uuid: string): Promise<void> {
+  async function resetInstance (uuid: string): Promise<void> {
     if (confirm('정말 초기화 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}/reset`, {
         method: 'POST'
@@ -90,7 +90,7 @@ const Search: FC = () => {
     }
   }
 
-  async function downloadKeypair(uuid: string, name: string): Promise<void> {
+  async function downloadKeypair (uuid: string, name: string): Promise<void> {
     await axios(`/api/instances/${uuid}/keypair`, {
       method: 'GET'
     }).then((res) => {
@@ -106,7 +106,7 @@ const Search: FC = () => {
       .catch((err) => { console.error(err) })
   }
 
-  async function updateForm(uuid: string): Promise<void> {
+  async function updateForm (uuid: string): Promise<void> {
     await axios(`/api/instances/${uuid}`, {
       method: 'GET'
     }).then((res) => {
@@ -132,7 +132,7 @@ const Search: FC = () => {
         <Alert type={data.type.toLowerCase()}>
           {data.message}
         </Alert>
-      ));
+      ))
 
       setTimeout(() => {
         window.location.reload()
@@ -140,7 +140,7 @@ const Search: FC = () => {
     })
   }, [])
 
-  async function inviteInstance(uuid: string): Promise<void> {
+  async function inviteInstance (uuid: string): Promise<void> {
     await axios('/api/invites', {
       method: 'POST',
       data: {
@@ -186,39 +186,39 @@ const Search: FC = () => {
       <TableMain>
         <Table
           columnDisplay={[
-            { id: "카테고리", visible: true },
-            { id: "목적", visible: true },
-            { id: "명령", visible: true },
-            { id: "상태", visible: true },
-            { id: "관리자", visible: true },
-            { id: "인스턴스 명", visible: true },
-            { id: "키페어", visible: true },
-            { id: "공인 IP", visible: true },
-            { id: "인스턴스 타입", visible: true },
-            { id: "운영체제", visible: true },
-            { id: "저장공간 용량", visible: true },
-            { id: "포트", visible: true },
-            { id: "인스턴스 요금", visible: true },
-            { id: "메모", visible: true }
+            { id: '카테고리', visible: true },
+            { id: '목적', visible: true },
+            { id: '명령', visible: true },
+            { id: '상태', visible: true },
+            { id: '관리자', visible: true },
+            { id: '인스턴스 명', visible: true },
+            { id: '키페어', visible: true },
+            { id: '공인 IP', visible: true },
+            { id: '인스턴스 타입', visible: true },
+            { id: '운영체제', visible: true },
+            { id: '저장공간 용량', visible: true },
+            { id: '포트', visible: true },
+            { id: '인스턴스 요금', visible: true },
+            { id: '메모', visible: true }
           ]}
 
           columnDefinitions={[
             {
-              id: "카테고리",
-              header: "카테고리",
+              id: '카테고리',
+              header: '카테고리',
               cell: (item: InstancesType) => item.category,
               width: '100px',
               isRowHeader: true
             },
             {
-              id: "목적",
-              header: "목적",
+              id: '목적',
+              header: '목적',
               cell: (item: InstancesType) => item.description,
               width: '150px'
             },
             {
-              id: "명령",
-              header: "명령 표시",
+              id: '명령',
+              header: '명령 표시',
               cell: (item: InstancesType) => (
                 <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap', gap: '8px', lineBreak: 'auto' }}>
                   <ButtonScape className='greenButton ButtonList' variant="primary" onClick={() => { void inviteInstance(item.id) }}>
@@ -245,8 +245,8 @@ const Search: FC = () => {
               width: '600px'
             },
             {
-              id: "상태",
-              header: "스테이터스 표시",
+              id: '상태',
+              header: '스테이터스 표시',
               cell: (item: InstancesType) => (
                 <StatusIndicator type={showStatus(item.state).value}>
                   {showStatus(item.state).label}
@@ -254,66 +254,66 @@ const Search: FC = () => {
               )
             },
             {
-              id: "관리자",
-              header: "관리자",
+              id: '관리자',
+              header: '관리자',
               cell: (item: InstancesType) => item.owner,
               width: '150px'
             },
             {
-              id: "인스턴스 명",
-              header: "인스턴스 명",
+              id: '인스턴스 명',
+              header: '인스턴스 명',
               cell: (item: InstancesType) => item.name,
               width: '300px'
             },
             {
-              id: "키페어",
-              header: "키페어 설치",
+              id: '키페어',
+              header: '키페어 설치',
               cell: (item: InstancesType) => (
                 <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                  <ButtonScape className='greenButton' variant="primary" onClick={() => void downloadKeypair(item.id, item.name)}>다운로드</ButtonScape>
+                  <ButtonScape className='greenButton' variant="primary" onClick={() => { void downloadKeypair(item.id, item.name) }}>다운로드</ButtonScape>
                 </div>
               ),
               width: '150px'
             },
             {
-              id: "공인 IP",
-              header: "공인 IP",
+              id: '공인 IP',
+              header: '공인 IP',
               cell: (item: InstancesType) => item.publicIP,
               width: '150px'
             },
             {
-              id: "인스턴스 타입",
-              header: "인스턴스 타입",
+              id: '인스턴스 타입',
+              header: '인스턴스 타입',
               cell: (item: InstancesType) => item.type,
               width: '150px'
             },
             {
-              id: "운영체제",
-              header: "운영체제 표시",
-              cell: () => "UBUNTU OS",
+              id: '운영체제',
+              header: '운영체제 표시',
+              cell: () => 'UBUNTU OS',
               width: '150px'
             },
             {
-              id: "저장공간 용량",
-              header: "저장공간 용량",
-              cell: (item: InstancesType) => item.storageSize + " GB",
+              id: '저장공간 용량',
+              header: '저장공간 용량',
+              cell: (item: InstancesType) => item.storageSize.toString() + ' GB',
               width: '150px'
             },
             {
-              id: "포트",
-              header: "포트 표시",
+              id: '포트',
+              header: '포트 표시',
               cell: (item: InstancesType) => item.ports,
               width: '300px'
             },
             {
-              id: "인스턴스 요금",
-              header: "인스턴스 요금 표시",
-              cell: (item: InstancesType) => Number(item.pricePerHour) + (item.storageSize * 0.1) + "$",
+              id: '인스턴스 요금',
+              header: '인스턴스 요금 표시',
+              cell: (item: InstancesType) => (item.pricePerHour + item.storageSize * 0.1).toString() + '$',
               width: '100px'
             },
             {
-              id: "메모",
-              header: "메모 표시",
+              id: '메모',
+              header: '메모 표시',
               cell: (item: InstancesType) => item.memo,
               width: '600px'
             }
@@ -342,6 +342,6 @@ const TableMain = styled.div`
     scroll-snap-type: both mandatory !important;
     font-size: 16px;
   }
-`;
+`
 
 export default Search

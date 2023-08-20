@@ -16,7 +16,7 @@ const CreateModal: FC<Props> = (props) => {
   const navigate = useNavigate()
   const [, updateState] = useState<any>()
   const forceUpdate = useCallback(() => { updateState({}) }, [])
-  const [status, setStatus] = useState("normal");
+  const [status, setStatus] = useState('normal')
   const [price, setPrice] = useState(0)
   const [storage, setStorage] = useState(8)
   const [event, dispatch] = useReducer(createModalReducer, {
@@ -31,7 +31,7 @@ const CreateModal: FC<Props> = (props) => {
     memo: ''
   })
 
-  async function getPrice(type: string): Promise<void> {
+  async function getPrice (type: string): Promise<void> {
     forceUpdate()
     await axios.get(`/api/prices/${type ?? 't3a.micro'}`)
       .then((res) => {
@@ -44,7 +44,7 @@ const CreateModal: FC<Props> = (props) => {
     void getPrice(event.type)
   }, [])
 
-  function portEnter(e: any): void {
+  function portEnter (e: any): void {
     if (e.keyCode === 13 || e.keyCode === 32) {
       const exists = event.ports.some((item: any) => item.value === event.port.replace(/\D/g, '')) as boolean
       if (!exists) {
@@ -56,9 +56,9 @@ const CreateModal: FC<Props> = (props) => {
     }
   }
 
-  async function create(): Promise<void> {
+  async function create (): Promise<void> {
     forceUpdate()
-    setStatus("loading");
+    setStatus('loading')
     await axios('/api/instances', {
       method: 'POST',
       headers: {
@@ -75,19 +75,18 @@ const CreateModal: FC<Props> = (props) => {
         memo: event.memo
       }
     }).then(() => {
-      setStatus("success");
+      setStatus('success')
       navigate('/')
-   }).catch(() => { setStatus("error") })
+    }).catch(() => { setStatus('error') })
   }
 
   return (
     <Body style={{ display: props.display ? 'block' : 'none' }}>
       <Main>
-        {status === "normal" ?
-          <></>
-          :
-          status === "success" ?
-            <Alert
+        {status === 'normal'
+          ? <></>
+          : status === 'success'
+            ? <Alert
               dismissible
               statusIconAriaLabel="Success"
               type="success"
@@ -99,9 +98,8 @@ const CreateModal: FC<Props> = (props) => {
             >
               잠시 후 새로고침 됩니다.
             </Alert>
-            :
-            status === "error" ?
-              <Alert
+            : status === 'error'
+              ? <Alert
                 statusIconAriaLabel="Error"
                 type="error"
                 header={
@@ -112,8 +110,7 @@ const CreateModal: FC<Props> = (props) => {
               >
                 잠시 후 다시시도 해주세요!
               </Alert>
-              :
-              <Alert
+              : <Alert
                 statusIconAriaLabel="Warning"
                 type="warning"
                 header={
@@ -135,7 +132,7 @@ const CreateModal: FC<Props> = (props) => {
           <input className="input" onChange={(e) => { dispatch({ type: 'setName', name: e.target.value }) }} placeholder="이름 | (예: capstone-2023-1-4)"></input>
           <input className="input" onChange={(e) => { dispatch({ type: 'setDescription', description: e.target.value }) }} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input>
           <input className="input" onChange={(e) => { dispatch({ type: 'setOwner', owner: e.target.value }) }} placeholder="관리자 | (예: 박민혁)"></input>
-          <input className="input" onChange={(e) => { dispatch({ type: 'setType', instance: e.target.value }); void getPrice(e.target.value, event.storage) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
+          <input className="input" onChange={(e) => { dispatch({ type: 'setType', instance: e.target.value }); void getPrice(e.target.value) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
           <datalist id="typeList" defaultValue={'t3a.micro'}>
             <option value={'t3a.micro'}>t3a.micro</option>
             <option value={'t3a.nano'}>t3a.nano</option>

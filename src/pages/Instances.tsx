@@ -1,17 +1,17 @@
 import axios from 'axios'
-import Table from "@cloudscape-design/components/table";
+import Table from '@cloudscape-design/components/table'
 import { type FC, useEffect, useReducer, useState } from 'react'
 import { styled } from 'styled-components'
 import CreateModal from '../components/CreateModal'
 import Button from '../components/Button'
-import ButtonScape from '@cloudscape-design/components/button';
+import ButtonScape from '@cloudscape-design/components/button'
 import updateModalReducer from '../modules/ModalReducer'
 import UpdateModal from '../components/UpdateModal'
 import { Body, Title, Top } from '../styles/globals'
 import { Link, useLocation } from 'react-router-dom'
-import { InstancesType } from '../utils/interfaces';
-import { Alert, StatusIndicator } from '@cloudscape-design/components';
-import showStatus from '../utils/showStatus';
+import { type InstancesType } from '../utils/interfaces'
+import { Alert, StatusIndicator } from '@cloudscape-design/components'
+import showStatus from '../utils/showStatus'
 import io from 'socket.io-client'
 import toast from 'react-hot-toast'
 
@@ -19,7 +19,7 @@ const Instances: FC = () => {
   const location = useLocation()
   const serachParams = new URLSearchParams(location.search)
   const page = serachParams.get('page') ?? '0'
-  const [prices, setPrices] = useState(0);
+  const [prices, setPrices] = useState(0)
   const [max, setMax] = useState(0)
   const [uuid, setUuid] = useState('')
   const [instances, setInstances] = useState([])
@@ -53,7 +53,7 @@ const Instances: FC = () => {
   }, [serachParams.get('page')])
 
   useEffect(() => {
-    axios('/api/prices', {
+    void axios('/api/prices', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ const Instances: FC = () => {
         <Alert type={data.type.toLowerCase()}>
           {data.message}
         </Alert>
-      ));
+      ))
 
       setTimeout(() => {
         window.location.reload()
@@ -79,7 +79,7 @@ const Instances: FC = () => {
     })
   }, [])
 
-  async function deleteInstance(uuid: string): Promise<void> {
+  async function deleteInstance (uuid: string): Promise<void> {
     if (confirm('정말 삭제 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}`, {
         method: 'DELETE'
@@ -89,7 +89,7 @@ const Instances: FC = () => {
     }
   }
 
-  async function restartInstance(uuid: string): Promise<void> {
+  async function restartInstance (uuid: string): Promise<void> {
     if (confirm('정말 재시작 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}/restart`, {
         method: 'POST'
@@ -99,7 +99,7 @@ const Instances: FC = () => {
     }
   }
 
-  async function resetInstance(uuid: string): Promise<void> {
+  async function resetInstance (uuid: string): Promise<void> {
     if (confirm('정말 초기화 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}/reset`, {
         method: 'POST'
@@ -109,7 +109,7 @@ const Instances: FC = () => {
     }
   }
 
-  async function downloadKeypair(uuid: string, name: string): Promise<void> {
+  async function downloadKeypair (uuid: string, name: string): Promise<void> {
     await axios(`/api/instances/${uuid}/keypair`, {
       method: 'GET'
     }).then((res) => {
@@ -118,14 +118,14 @@ const Instances: FC = () => {
       const a = document.createElement('a')
       a.href = downloadLink
       a.download = `${name}.ppk`
-      a.click();
+      a.click()
 
       URL.revokeObjectURL(downloadLink)
     })
       .catch((err) => { console.error(err) })
   }
 
-  async function updateForm(uuid: string): Promise<void> {
+  async function updateForm (uuid: string): Promise<void> {
     await axios(`/api/instances/${uuid}`, {
       method: 'GET'
     }).then((res) => {
@@ -143,7 +143,7 @@ const Instances: FC = () => {
     })
   }
 
-  async function inviteInstance(uuid: string): Promise<void> {
+  async function inviteInstance (uuid: string): Promise<void> {
     await axios('/api/invites', {
       method: 'POST',
       data: {
@@ -190,39 +190,39 @@ const Instances: FC = () => {
         <Table
           variant="full-page"
           columnDisplay={[
-            { id: "카테고리", visible: true },
-            { id: "목적", visible: true },
-            { id: "명령", visible: true },
-            { id: "상태", visible: true },
-            { id: "관리자", visible: true },
-            { id: "인스턴스 명", visible: true },
-            { id: "키페어", visible: true },
-            { id: "공인 IP", visible: true },
-            { id: "인스턴스 타입", visible: true },
-            { id: "운영체제", visible: true },
-            { id: "저장공간 용량", visible: true },
-            { id: "포트", visible: true },
-            { id: "인스턴스 요금", visible: true },
-            { id: "메모", visible: true }
+            { id: '카테고리', visible: true },
+            { id: '목적', visible: true },
+            { id: '명령', visible: true },
+            { id: '상태', visible: true },
+            { id: '관리자', visible: true },
+            { id: '인스턴스 명', visible: true },
+            { id: '키페어', visible: true },
+            { id: '공인 IP', visible: true },
+            { id: '인스턴스 타입', visible: true },
+            { id: '운영체제', visible: true },
+            { id: '저장공간 용량', visible: true },
+            { id: '포트', visible: true },
+            { id: '인스턴스 요금', visible: true },
+            { id: '메모', visible: true }
           ]}
 
           columnDefinitions={[
             {
-              id: "카테고리",
-              header: "카테고리",
+              id: '카테고리',
+              header: '카테고리',
               cell: (item: InstancesType) => item.category,
               width: '100px',
               isRowHeader: true
             },
             {
-              id: "목적",
-              header: "목적",
+              id: '목적',
+              header: '목적',
               cell: (item: InstancesType) => item.description,
               width: '150px'
             },
             {
-              id: "명령",
-              header: "-",
+              id: '명령',
+              header: '-',
               cell: (item: InstancesType) => (
                 <div style={{ display: 'flex', flexWrap: 'nowrap', gap: '8px', lineBreak: 'auto' }}>
                   <ButtonScape className='greenButton ButtonList' variant="primary" onClick={() => { void inviteInstance(item.id) }}>
@@ -249,8 +249,8 @@ const Instances: FC = () => {
               width: '550px'
             },
             {
-              id: "상태",
-              header: "상태",
+              id: '상태',
+              header: '상태',
               cell: (item: InstancesType) => (
                 <StatusIndicator type={showStatus(item.state).value}>
                   {showStatus(item.state).label}
@@ -258,66 +258,66 @@ const Instances: FC = () => {
               )
             },
             {
-              id: "관리자",
-              header: "관리자",
+              id: '관리자',
+              header: '관리자',
               cell: (item: InstancesType) => item.owner,
               width: '150px'
             },
             {
-              id: "인스턴스 명",
-              header: "인스턴스 명",
+              id: '인스턴스 명',
+              header: '인스턴스 명',
               cell: (item: InstancesType) => item.name,
               width: '300px'
             },
             {
-              id: "키페어",
-              header: "키페어 설치",
+              id: '키페어',
+              header: '키페어 설치',
               cell: (item: InstancesType) => (
                 <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                  <ButtonScape className='greenButton' variant="primary" onClick={() => void downloadKeypair(item.id, item.name)}>다운로드</ButtonScape>
+                  <ButtonScape className='greenButton' variant="primary" onClick={() => { void downloadKeypair(item.id, item.name) }}>다운로드</ButtonScape>
                 </div>
               ),
               width: '150px'
             },
             {
-              id: "공인 IP",
-              header: "공인 IP",
+              id: '공인 IP',
+              header: '공인 IP',
               cell: (item: InstancesType) => item.publicIP,
               width: '150px'
             },
             {
-              id: "인스턴스 타입",
-              header: "인스턴스 타입",
+              id: '인스턴스 타입',
+              header: '인스턴스 타입',
               cell: (item: InstancesType) => item.type,
               width: '150px'
             },
             {
-              id: "운영체제",
-              header: "운영체제 표시",
-              cell: () => "UBUNTU OS",
+              id: '운영체제',
+              header: '운영체제 표시',
+              cell: () => 'UBUNTU OS',
               width: '150px'
             },
             {
-              id: "저장공간 용량",
-              header: "저장공간 용량",
-              cell: (item: InstancesType) => item.storageSize + " GB",
+              id: '저장공간 용량',
+              header: '저장공간 용량',
+              cell: (item: InstancesType) => item.storageSize.toString() + ' GB',
               width: '150px'
             },
             {
-              id: "포트",
-              header: "열려있는 포트",
+              id: '포트',
+              header: '열려있는 포트',
               cell: (item: InstancesType) => item.ports,
               width: '300px'
             },
             {
-              id: "인스턴스 요금",
-              header: "인스턴스 요금",
-              cell: (item: InstancesType) => Number(item.pricePerHour) + (item.storageSize * 0.1) + "$",
+              id: '인스턴스 요금',
+              header: '인스턴스 요금',
+              cell: (item: InstancesType) => (item.pricePerHour + (item.storageSize * 0.1)).toString() + '$',
               width: '200px'
             },
             {
-              id: "메모",
-              header: "메모",
+              id: '메모',
+              header: '메모',
               cell: (item: InstancesType) => item.memo,
               width: '600px'
             }
@@ -349,4 +349,4 @@ const TableMain = styled.div`
   }
 `
 
-export default Instances;
+export default Instances

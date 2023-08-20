@@ -49,7 +49,7 @@ const Invites: FC = () => {
     })
   }, [uuid])
 
-  async function restartInstance(): Promise<void> {
+  async function restartInstance (): Promise<void> {
     if (confirm('정말 재시작 하시겠습니까?')) {
       await axios(`/api/invites/${uuid ?? ''}/restart`, {
         method: 'POST'
@@ -58,7 +58,7 @@ const Invites: FC = () => {
     }
   }
 
-  async function resetInstance(): Promise<void> {
+  async function resetInstance (): Promise<void> {
     if (confirm('정말 초기화 하시겠습니까?')) {
       await axios(`/api/invites/${uuid ?? ''}/reset`, {
         method: 'POST'
@@ -67,7 +67,7 @@ const Invites: FC = () => {
     }
   }
 
-  async function downloadKeypair(): Promise<void> {
+  async function downloadKeypair (): Promise<void> {
     await axios(`/api/invites/${uuid ?? ''}/keypair`, {
       method: 'GET'
     }).then((res) => {
@@ -103,8 +103,8 @@ const Invites: FC = () => {
                   alt="placeholder"
                 />
               ),
-              position: "side",
-              width: "33%"
+              position: 'side',
+              width: '33%'
             }}
           >
             <SpaceBetween direction="vertical" size="s">
@@ -138,7 +138,7 @@ const Invites: FC = () => {
             header={
               <Header
                 variant="h2"
-                description={`${event.type} SSD ${event.storage}GB, ${event.owner}`}
+                description={`${event.type as string} SSD ${event.storage as string}GB, ${event.owner as string}`}
               >
                 {event.name}
               </Header>

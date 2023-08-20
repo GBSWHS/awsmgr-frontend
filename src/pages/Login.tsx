@@ -8,7 +8,7 @@ const Login: FC = () => {
   const [password, setPassword] = useState<string>('')
   const navigate = useNavigate()
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>): Promise<void> {
+  async function onSubmit (e: FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault()
     setFetched(true)
 
