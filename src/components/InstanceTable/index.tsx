@@ -6,6 +6,9 @@ import updateModalReducer from '../../modules/ModalReducer'
 import axios from 'axios'
 import UpdateModal from '../UpdateModal'
 import showStatus from '../../utils/showStatus'
+import { useRefreshNotifier } from '../RefreshNotifier'
+
+import style from './style.module.scss'
 
 interface Props {
   instances: InstancesType[]
@@ -13,6 +16,7 @@ interface Props {
 }
 
 const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
+  const { refresh } = useRefreshNotifier()
   const [uuid, setUuid] = useState('')
   const [updateModalStatus, setUpdateModal] = useState(false)
   const [event, dispatch] = useReducer(updateModalReducer, {
@@ -33,7 +37,8 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
         method: 'DELETE'
       }).then(() => { alert('인스턴스가 삭제되었습니다.') })
         .catch(() => { alert('인스턴스를 삭제하는 도중 에러가 발생했습니다.') })
-      window.location.reload()
+
+      refresh()
     }
   }
 
@@ -43,7 +48,8 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
         method: 'POST'
       }).then(() => { alert('인스턴스가 재시작 되었습니다.') })
         .catch(() => { alert('인스턴스를 재시작하는 도중 에러가 발생했습니다.') })
-      window.location.reload()
+
+      refresh()
     }
   }
 
@@ -53,7 +59,8 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
         method: 'POST'
       }).then(() => { alert('인스턴스가 초기화 되었습니다.') })
         .catch(() => { alert('인스턴스를 초기화하는 도중 에러가 발생했습니다.') })
-      window.location.reload()
+
+      refresh()
     }
   }
 
@@ -98,24 +105,13 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
         instanceID: uuid
       }
     }).then((res) => {
-      const $textarea = document.createElement('textarea')
-      // body 요소에 존재해야 복사가 진행됨
-      document.body.appendChild($textarea)
-
-      // 복사할 특정 텍스트를 임시의 textarea에 넣어주고 모두 셀렉션 상태
-      $textarea.value = `${window.location.origin}/invites/${res.data.body.id as string}`
-      $textarea.select()
-
-      // 복사 후 textarea 지우기
-      document.execCommand('copy')
-      document.body.removeChild($textarea)
-
+      void navigator.clipboard.writeText(`${window.location.origin}/invites/${res.data.body.id as string}`)
       alert('초대링크를 복사했습니다.')
     })
   }
 
   return (
-    <>
+    <section className={style.instanceTable}>
       <Table
         variant="full-page"
         columnDisplay={[
@@ -254,12 +250,16 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
 
         items={instances}
         loading={isLoading}
-
         loadingText="인스턴스를 불러오는 중..."
       />
 
-      <UpdateModal display={updateModalStatus} booleanAction={setUpdateModal} instance={event} instanceAction={dispatch} uuid={uuid}></UpdateModal>
-    </>
+      <UpdateModal
+        display={updateModalStatus}
+        booleanAction={setUpdateModal}
+        instance={event}
+        instanceAction={dispatch}
+        uuid={uuid} />
+    </section>
   )
 }
 
