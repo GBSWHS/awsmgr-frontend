@@ -111,155 +111,156 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
   }
 
   return (
-    <section className={style.instanceTable}>
-      <Table
-        variant="full-page"
-        columnDisplay={[
-          { id: '카테고리', visible: true },
-          { id: '목적', visible: true },
-          { id: '명령', visible: true },
-          { id: '상태', visible: true },
-          { id: '관리자', visible: true },
-          { id: '인스턴스 명', visible: true },
-          { id: '키페어', visible: true },
-          { id: '공인 IP', visible: true },
-          { id: '인스턴스 타입', visible: true },
-          { id: '운영체제', visible: true },
-          { id: '저장공간 용량', visible: true },
-          { id: '포트', visible: true },
-          { id: '인스턴스 요금', visible: true },
-          { id: '메모', visible: true }
-        ]}
+    <>
+      <section className={style.instanceTable}>
+        <Table
+          variant="full-page"
+          columnDisplay={[
+            { id: '카테고리', visible: true },
+            { id: '목적', visible: true },
+            { id: '명령', visible: true },
+            { id: '상태', visible: true },
+            { id: '관리자', visible: true },
+            { id: '인스턴스 명', visible: true },
+            { id: '키페어', visible: true },
+            { id: '공인 IP', visible: true },
+            { id: '인스턴스 타입', visible: true },
+            { id: '운영체제', visible: true },
+            { id: '저장공간 용량', visible: true },
+            { id: '포트', visible: true },
+            { id: '인스턴스 요금', visible: true },
+            { id: '메모', visible: true }
+          ]}
 
-        columnDefinitions={[
-          {
-            id: '카테고리',
-            header: '카테고리',
-            cell: (item: InstancesType) => item.category,
-            width: '100px',
-            isRowHeader: true
-          },
-          {
-            id: '목적',
-            header: '목적',
-            cell: (item: InstancesType) => item.description,
-            width: '150px'
-          },
-          {
-            id: '명령',
-            header: '-',
-            cell: (item: InstancesType) => (
-              <div style={{ display: 'flex', flexWrap: 'nowrap', gap: '8px', lineBreak: 'auto' }}>
-                <Button className='greenButton ButtonList' variant="primary" onClick={() => { void inviteInstance(item.id) }}>
-                  초대링크 복사
-                </Button>
+          columnDefinitions={[
+            {
+              id: '카테고리',
+              header: '카테고리',
+              cell: (item: InstancesType) => item.category,
+              width: '100px',
+              isRowHeader: true
+            },
+            {
+              id: '목적',
+              header: '목적',
+              cell: (item: InstancesType) => item.description,
+              width: '150px'
+            },
+            {
+              id: '명령',
+              header: '-',
+              cell: (item: InstancesType) => (
+                <div style={{ display: 'flex', flexWrap: 'nowrap', gap: '8px', lineBreak: 'auto' }}>
+                  <Button className='greenButton ButtonList' variant="primary" onClick={() => { void inviteInstance(item.id) }}>
+                    초대링크 복사
+                  </Button>
 
-                <Button className='blueButton ButtonList' variant="primary" onClick={() => { void restartInstance(item.id) }}>
-                  재시작
-                </Button>
+                  <Button className='blueButton ButtonList' variant="primary" onClick={() => { void restartInstance(item.id) }}>
+                    재시작
+                  </Button>
 
-                <Button className='redButton ButtonList' variant="primary" onClick={() => { void resetInstance(item.id) }}>
-                  초기화
-                </Button>
+                  <Button className='redButton ButtonList' variant="primary" onClick={() => { void resetInstance(item.id) }}>
+                    초기화
+                  </Button>
 
-                <Button className='redButton ButtonList' variant="primary" onClick={() => { void deleteInstance(item.id) }}>
-                  삭제
-                </Button>
+                  <Button className='redButton ButtonList' variant="primary" onClick={() => { void deleteInstance(item.id) }}>
+                    삭제
+                  </Button>
 
-                <Button className='orangeButton ButtonList' variant="primary" onClick={() => { void updateForm(item.id) }}>
-                  수정
-                </Button>
-              </div>
-            ),
-            width: '550px'
-          },
-          {
-            id: '상태',
-            header: '상태',
-            cell: (item: InstancesType) => (
-              <StatusIndicator type={showStatus(item.state).value}>
-                {showStatus(item.state).label}
-              </StatusIndicator>
-            )
-          },
-          {
-            id: '관리자',
-            header: '관리자',
-            cell: (item: InstancesType) => item.owner,
-            width: '150px'
-          },
-          {
-            id: '인스턴스 명',
-            header: '인스턴스 명',
-            cell: (item: InstancesType) => item.name,
-            width: '300px'
-          },
-          {
-            id: '키페어',
-            header: '키페어 설치',
-            cell: (item: InstancesType) => (
-              <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
-                <Button className='greenButton' variant="primary" onClick={() => { void downloadKeypair(item.id, item.name) }}>다운로드</Button>
-              </div>
-            ),
-            width: '150px'
-          },
-          {
-            id: '공인 IP',
-            header: '공인 IP',
-            cell: (item: InstancesType) => item.publicIP,
-            width: '150px'
-          },
-          {
-            id: '인스턴스 타입',
-            header: '인스턴스 타입',
-            cell: (item: InstancesType) => item.type,
-            width: '150px'
-          },
-          {
-            id: '운영체제',
-            header: '운영체제 표시',
-            cell: () => 'UBUNTU OS',
-            width: '150px'
-          },
-          {
-            id: '저장공간 용량',
-            header: '저장공간 용량',
-            cell: (item: InstancesType) => item.storageSize.toString() + ' GB',
-            width: '150px'
-          },
-          {
-            id: '포트',
-            header: '열려있는 포트',
-            cell: (item: InstancesType) => item.ports,
-            width: '300px'
-          },
-          {
-            id: '인스턴스 요금',
-            header: '인스턴스 요금',
-            cell: (item: InstancesType) => (item.pricePerHour + (item.storageSize * 0.1)).toString() + '$',
-            width: '200px'
-          },
-          {
-            id: '메모',
-            header: '메모',
-            cell: (item: InstancesType) => item.memo,
-            width: '600px'
-          }
-        ]}
+                  <Button className='orangeButton ButtonList' variant="primary" onClick={() => { void updateForm(item.id) }}>
+                    수정
+                  </Button>
+                </div>
+              ),
+              width: '550px'
+            },
+            {
+              id: '상태',
+              header: '상태',
+              cell: (item: InstancesType) => (
+                <StatusIndicator type={showStatus(item.state).value}>
+                  {showStatus(item.state).label}
+                </StatusIndicator>
+              )
+            },
+            {
+              id: '관리자',
+              header: '관리자',
+              cell: (item: InstancesType) => item.owner,
+              width: '150px'
+            },
+            {
+              id: '인스턴스 명',
+              header: '인스턴스 명',
+              cell: (item: InstancesType) => item.name,
+              width: '300px'
+            },
+            {
+              id: '키페어',
+              header: '키페어 설치',
+              cell: (item: InstancesType) => (
+                <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'nowrap' }}>
+                  <Button className='greenButton' variant="primary" onClick={() => { void downloadKeypair(item.id, item.name) }}>다운로드</Button>
+                </div>
+              ),
+              width: '150px'
+            },
+            {
+              id: '공인 IP',
+              header: '공인 IP',
+              cell: (item: InstancesType) => item.publicIP,
+              width: '150px'
+            },
+            {
+              id: '인스턴스 타입',
+              header: '인스턴스 타입',
+              cell: (item: InstancesType) => item.type,
+              width: '150px'
+            },
+            {
+              id: '운영체제',
+              header: '운영체제 표시',
+              cell: () => 'UBUNTU OS',
+              width: '150px'
+            },
+            {
+              id: '저장공간 용량',
+              header: '저장공간 용량',
+              cell: (item: InstancesType) => item.storageSize.toString() + ' GB',
+              width: '150px'
+            },
+            {
+              id: '포트',
+              header: '열려있는 포트',
+              cell: (item: InstancesType) => item.ports,
+              width: '300px'
+            },
+            {
+              id: '인스턴스 요금',
+              header: '인스턴스 요금',
+              cell: (item: InstancesType) => (item.pricePerHour + (item.storageSize * 0.1)).toString() + '$',
+              width: '200px'
+            },
+            {
+              id: '메모',
+              header: '메모',
+              cell: (item: InstancesType) => item.memo,
+              width: '600px'
+            }
+          ]}
 
-        items={instances}
-        loading={isLoading}
-        loadingText="인스턴스를 불러오는 중..."
-      />
-
+          items={instances}
+          loading={isLoading}
+          loadingText="인스턴스를 불러오는 중..."
+        />
+      </section>
       <UpdateModal
         display={updateModalStatus}
         booleanAction={setUpdateModal}
         instance={event}
         instanceAction={dispatch}
         uuid={uuid} />
-    </section>
+    </>
   )
 }
 

@@ -1,0 +1,51 @@
+.modal {
+  position: absolute;
+  top: -60px;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 60px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  z-index: 50;
+
+  .background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #00000050;
+    backdrop-filter: blur(3px);
+    z-index: 55;
+  }
+
+  .content {
+    position: relative;
+    z-index: 60;
+    background-color: white;
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px;
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,0.3), 1px 1px 1px 0 rgba(0,28,36,0.15), -1px 1px 1px 0 rgba(0,28,36,0.15);
+    gap: 20px;
+
+    .title {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 20px;
+
+      h1 {
+        font-size: 24px;
+      }
+
+      img {
+        cursor: pointer;
+        height: 24px;
+      }
+    }
+  }
+}

@@ -9,7 +9,7 @@ import { AnimatePresence } from 'framer-motion'
 
 const App: FC = () =>
   <BrowserRouter>
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       <TopNav />
     </AnimatePresence>
 

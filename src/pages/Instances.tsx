@@ -50,7 +50,7 @@ const Instances: FC = () => {
 
   return (
     <Container>
-      <TableControl prices={prices} max={max} />
+      <TableControl prices={prices} max={max} title="인스턴스 목록" />
       <InstanceTable instances={instances} isLoading={isLoading} />
     </Container>
   )

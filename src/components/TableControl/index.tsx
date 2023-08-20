@@ -5,11 +5,12 @@ import style from './style.module.scss'
 import { Button } from '@cloudscape-design/components'
 
 interface Props {
+  title: string
   max: number
   prices?: number
 }
 
-const TableControl: FC<Props> = ({ max, prices }) => {
+const TableControl: FC<Props> = ({ max, prices, title }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [createModalStatus, setCreateModal] = useState(false)
 
@@ -36,7 +37,7 @@ const TableControl: FC<Props> = ({ max, prices }) => {
   return (
     <>
       <div className={style.tableControl}>
-        <h1>인스턴스</h1>
+        <h1>{title}</h1>
         <p>총 <b>{prices ?? '...'}</b>$/월</p>
 
         <div className={style.pageBtns}>
