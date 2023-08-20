@@ -178,7 +178,6 @@ const InputBody = styled.div`
     width: 100% !important;
     display: block !important;
     position: relative !important;
-    height: 100%;
 
     input#search {
       color: rgb(255, 255, 255) !important;

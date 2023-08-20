@@ -1,0 +1,81 @@
+@import 'normalize.css';
+@import '@fontsource/noto-sans-kr/400.css';
+@import '@fontsource/noto-sans-kr/700.css';
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+  font-family: 'Noto Sans KR', Arial, Helvetica, sans-serif;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+b {
+  font-weight: 700;
+}
+
+h1, h2, h3, h4, h5, h6, p, li, ul, ol {
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+}
+
+input, select, textarea {
+  display: block;
+}
+
+button {
+  word-break: keep-all !important;
+  font-size: 14px;
+}
+
+.blueButton {
+  background-color: #007dbc !important;
+  border-color: #007dbc !important;
+}
+
+.blueButton:hover {
+  background-color: #0972d3 !important;
+  border-color: #0972d3 !important;
+}
+
+.redButton {
+  background-color: #df3312 !important;
+  border-color: #df3312 !important;
+}
+
+.redButton:hover {
+  background-color: #d91515 !important;
+  border-color: #d91515 !important;
+}
+
+.orangeButton {
+  background-color: #ff9900 !important;
+  border-color: #ff9900 !important;
+}
+
+.orangeButton:hover {
+  background-color: #ec7211 !important;
+  border-color: #ec7211 !important;
+}
+
+.greenButton {
+  background-color: rgb(60, 135, 0) !important;
+  border-color: rgb(60, 135, 0) !important; 
+}
+
+.greenButton:hover {
+  background-color: #037f0c !important;
+  border-color: #037f0c !important; 
+}

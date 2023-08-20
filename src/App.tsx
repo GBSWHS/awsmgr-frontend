@@ -6,13 +6,11 @@ import Invites from './pages/Invites'
 import Search from './pages/Search'
 import PathProcesor from './components/PathProcessor'
 import { type FC } from 'react'
-import { GlobalStyles } from './styles/globals'
 import { Toaster } from 'react-hot-toast'
 
 const App: FC = () =>
   <BrowserRouter>
     <Header />
-    <GlobalStyles />
     <PathProcesor />
 
     <Routes>
