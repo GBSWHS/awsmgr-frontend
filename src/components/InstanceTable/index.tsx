@@ -263,7 +263,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
             {
               id: '인스턴스 요금',
               header: '인스턴스 요금',
-              cell: (item: InstancesType) => (item.pricePerHour + (item.storageSize * 0.1)).toString() + '$',
+              cell: (item: InstancesType) => (item.pricePerHour + (item.storageSize * 0.1)).toFixed(2) + '$',
               width: '200px'
             },
             {
