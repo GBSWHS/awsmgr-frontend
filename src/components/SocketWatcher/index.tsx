@@ -22,7 +22,7 @@ const SocketWatcher: FC = () => {
         }}>
           <Alert type={data.type.toLowerCase()}>
             {data.message}
-            {data?.error}
+            {data?.error?.message}
           </Alert>
         </div>
       ))
