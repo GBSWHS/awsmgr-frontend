@@ -19,7 +19,7 @@ const Instances: FC = () => {
   const fetchData = async (): Promise<void> => {
     setIsLoading(true)
 
-    const res = await axios(`/api/instances?take=10&skip=${parseInt(page) * 10}`, {
+    const res = await axios(`/api/instances?take=20&skip=${parseInt(page) * 10}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

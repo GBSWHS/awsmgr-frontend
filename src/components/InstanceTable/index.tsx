@@ -135,9 +135,10 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
   }
 
   return (
-    <>
+    <div className={style.content}>
       <section className={style.instanceTable}>
         <Table
+          stickyHeader
           variant="full-page"
           columnDisplay={[
             { id: '카테고리', visible: true },
@@ -196,7 +197,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
                   </Button>
                 </div>
               ),
-              width: '550px'
+              width: '700px'
             },
             {
               id: '상태',
@@ -284,7 +285,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
         instance={event}
         instanceAction={dispatch}
         uuid={uuid} />
-    </>
+    </div>
   )
 }
 

@@ -8,7 +8,7 @@
   justify-content: center;
   align-items: center;
   
-  z-index: 50;
+  z-index: 900;
 
   .background {
     position: absolute;
@@ -16,12 +16,12 @@
     height: 100%;
     background-color: #00000050;
     backdrop-filter: blur(3px);
-    z-index: 55;
+    z-index: 950;
   }
 
   .content {
     position: relative;
-    z-index: 60;
+    z-index: 1000;
     background-color: white;
     width: 100%;
     max-width: 500px;

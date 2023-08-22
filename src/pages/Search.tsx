@@ -22,7 +22,7 @@ const Search: FC = () => {
     setIsLoading(true)
     console.log(search)
 
-    const res = await axios(`/api/instances/search?take=10&skip=${parseInt(page) * 10}&query=${search ?? ''}`, {
+    const res = await axios(`/api/instances/search?take=20&skip=${parseInt(page) * 10}&query=${search ?? ''}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

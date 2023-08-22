@@ -38,14 +38,14 @@ const TableControl: FC<Props> = ({ max, prices, title }) => {
     <>
       <div className={style.tableControl}>
         <h1>{title}</h1>
-        <p>총 <b>{prices ?? '...'}</b>$/월</p>
+        <p>총 <b>{prices?.toFixed(2) ?? '...'}</b>$/월</p>
 
         <div className={style.pageBtns}>
           <button className={style.pageBtn} disabled={isPrevDisabled} onClick={onPrevClick}>
             <img src="/assets/icon/prev.svg" alt="Previous" />
           </button>
 
-          <b>{page + 1}</b>
+          <b>{page + 1}{max < 1 ? '' : `/${max}`}</b>
 
           <button className={style.pageBtn} disabled={isNextDisabled} onClick={onNextClick}>
             <img src="/assets/icon/next.svg" alt="Next" />
