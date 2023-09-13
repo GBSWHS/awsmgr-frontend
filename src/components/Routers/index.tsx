@@ -17,7 +17,7 @@ const Routers: FC = () => {
       .catch(() => ({ status: 400 }))
 
     if (res.status !== 200) {
-      if (location.pathname !== '/login' || location.pathname.startsWith('/invites'))
+      if (location.pathname !== '/login' && !location.pathname.startsWith('/invites'))
         navigate('/login')
 
       return
