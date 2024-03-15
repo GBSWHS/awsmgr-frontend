@@ -37,7 +37,7 @@ const CreateModal: FC<Props> = ({ display, action }) => {
     memo: ''
   })
 
-  async function getPrice (type: string): Promise<void> {
+  async function getPrice(type: string): Promise<void> {
     forceUpdate()
     await axios.get(`/api/prices/${type ?? 't3a.micro'}`)
       .then((res) => {
@@ -50,7 +50,7 @@ const CreateModal: FC<Props> = ({ display, action }) => {
     void getPrice(event.type)
   }, [])
 
-  function portEnter (e: any): void {
+  function portEnter(e: any): void {
     if (e.keyCode === 13 || e.keyCode === 32) {
       const exists = event.ports.some((item: any) => item.value === event.port.replace(/\D/g, '')) as boolean
       if (!exists) {
@@ -62,7 +62,7 @@ const CreateModal: FC<Props> = ({ display, action }) => {
     }
   }
 
-  async function create (): Promise<void> {
+  async function create(): Promise<void> {
     if (isLoading) return
     setIsLoading(true)
 
@@ -108,7 +108,7 @@ const CreateModal: FC<Props> = ({ display, action }) => {
           <label><input min={8} className="input ssd" value={event.storage} onChange={(e) => { dispatch({ type: 'setStorage', storage: parseInt(e.target.value) }); setStorage(parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB</label>
         </div>
         <div>
-        열린 포트
+          열린 포트
           <label>
             <CreatableSelect
               className="createSelect"
