@@ -25,7 +25,7 @@ const UpdateModal: FC<Props> = ({ display, booleanAction, instance, instanceActi
   const [storage, setStorage] = useState(0)
   const [isIpChange, setChange] = useState(false)
 
-  async function getPrice (type: string): Promise<void> {
+  async function getPrice(type: string): Promise<void> {
     forceUpdate()
     await axios.get(`/api/prices/${type ?? 't3a.micro'}`)
       .then((res) => {
@@ -38,19 +38,21 @@ const UpdateModal: FC<Props> = ({ display, booleanAction, instance, instanceActi
     void getPrice(instance.type)
   }, [price])
 
-  function portEnter (e: any): void {
+  function portEnter(e: any): void {
     if (e.keyCode === 13 || e.keyCode === 32) {
-      const exists = instance.ports.some((item: any) => item.value === instance.port.replace(/\D/g, ''))
-      if (!exists) {
-        instanceAction({ type: 'setPort', port: '' })
-        instanceAction({
-          type: 'addPort', port: instance.port.replace(/\D/g, '')
-        })
+      if (instance.port) {
+        const exists = instance.ports.some((item: any) => item.value === instance.port.replace(/\D/g, '')) as boolean
+        if (!exists) {
+          instanceAction({ type: 'setPort', port: '' })
+          instanceAction({
+            type: 'addPort', port: instance.port.replace(/\D/g, '')
+          })
+        }
       }
     }
   }
 
-  async function update (): Promise<void> {
+  async function update(): Promise<void> {
     if (isLoading) return
     setIsLoading(true)
 
@@ -79,26 +81,26 @@ const UpdateModal: FC<Props> = ({ display, booleanAction, instance, instanceActi
 
   return (
     <Modal action={booleanAction} display={display} title={`인스턴스 수정: ${instance.name}`}>
-        <Form>
-          <input className="input" value={instance.category} onChange={(e) => { instanceAction({ type: 'setCategory', category: e.target.value }) }} placeholder="분류 | (예: 캡스톤)"></input>
-          <input className="input" disabled value={instance.name} onChange={(e) => { instanceAction({ type: 'setName', name: e.target.value }) }} placeholder="이름 | (예: capstone-2023-1-4)"></input>
-          <input className="input" value={instance.description} onChange={(e) => { instanceAction({ type: 'setDescription', description: e.target.value }) }} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input>
-          <input className="input" value={instance.owner} onChange={(e) => { instanceAction({ type: 'setOwner', owner: e.target.value }) }} placeholder="관리자 | (예: 박민혁)"></input>
-          <input className="input" value={instance.type} onChange={(e) => { setChange(true); instanceAction({ type: 'setType', instance: e.target.value }); void getPrice(e.target.value) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
-          <datalist id="typeList" defaultValue={'t3a.micro'}>
-            <option value={'t3a.micro'}>t3a.micro</option>
-            <option value={'t3a.nano'}>t3a.nano</option>
-            <option value={'t3a.small'}>t3a.small</option>
-            <option value={'t2.nano'}>t2.nano</option>
-          </datalist>
-          <div>
-            저장공간
-            <label><input min={8} className="input ssd" value={instance.storage} onChange={(e) => { setChange(true); instanceAction({ type: 'setStorage', storage: parseInt(e.target.value) }); setStorage(parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB</label>
-          </div>
-          <div>
-            열린 포트
+      <Form>
+        <input className="input" value={instance.category} onChange={(e) => { instanceAction({ type: 'setCategory', category: e.target.value }) }} placeholder="분류 | (예: 캡스톤)"></input>
+        <input className="input" disabled value={instance.name} onChange={(e) => { instanceAction({ type: 'setName', name: e.target.value }) }} placeholder="이름 | (예: capstone-2023-1-4)"></input>
+        <input className="input" value={instance.description} onChange={(e) => { instanceAction({ type: 'setDescription', description: e.target.value }) }} placeholder="목적 | (예: 2023년 1학기 캡스톤 #4)"></input>
+        <input className="input" value={instance.owner} onChange={(e) => { instanceAction({ type: 'setOwner', owner: e.target.value }) }} placeholder="관리자 | (예: 박민혁)"></input>
+        <input className="input" value={instance.type} onChange={(e) => { setChange(true); instanceAction({ type: 'setType', instance: e.target.value }); void getPrice(e.target.value) }} list="typeList" placeholder="인스턴스 타입 | t3a.micro"></input>
+        <datalist id="typeList" defaultValue={'t3a.micro'}>
+          <option value={'t3a.micro'}>t3a.micro</option>
+          <option value={'t3a.nano'}>t3a.nano</option>
+          <option value={'t3a.small'}>t3a.small</option>
+          <option value={'t2.nano'}>t2.nano</option>
+        </datalist>
+        <div>
+          저장공간
+          <label><input min={8} className="input ssd" value={instance.storage} onChange={(e) => { setChange(true); instanceAction({ type: 'setStorage', storage: parseInt(e.target.value) }); setStorage(parseInt(e.target.value)) }} type="number" placeholder="저장공간 용량: (예: 8)"></input>GB</label>
+        </div>
+        <div>
+          열린 포트
+          <label>
             <CreatableSelect
-              value={instance.ports.map((value) => { return { label: value, value } })}
               className="createSelect"
               components={{ DropdownIndicator: null }}
               inputValue={instance.port}
@@ -109,6 +111,7 @@ const UpdateModal: FC<Props> = ({ display, booleanAction, instance, instanceActi
               onInputChange={(e) => { instanceAction({ type: 'setPort', port: e.toString() }) }}
               onKeyDown={portEnter}
               placeholder="포트"
+              value={instance.ports}
               styles={{
                 control: (base) => ({
                   ...base,
@@ -126,19 +129,19 @@ const UpdateModal: FC<Props> = ({ display, booleanAction, instance, instanceActi
                   width: 'unset'
                 })
               }}
-            />
+            /></label>
 
-            <p>포트를 입력하고 엔터를 눌러주세요.</p>
-          </div>
-          <div>
-            기타메모
-            <textarea value={instance.memo} onChange={(e) => { instanceAction({ type: 'setMemo', memo: e.target.value }) }}></textarea>
-          </div>
-          <Bottom>
-            <h1 style={{ marginRight: '10px' }}>예상 금액: {(price + storage * 0.1).toFixed(2)}$/월</h1>
-            <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void update() }}>{isLoading ? '수정중.' : (isIpChange ? '수정 후 재시작' : '수정')}</Button>
-          </Bottom>
-        </Form>
+          <p>포트를 입력하고 엔터를 눌러주세요.</p>
+        </div>
+        <div>
+          기타메모
+          <textarea value={instance.memo} onChange={(e) => { instanceAction({ type: 'setMemo', memo: e.target.value }) }}></textarea>
+        </div>
+        <Bottom>
+          <h1 style={{ marginRight: '10px' }}>예상 금액: {(price + storage * 0.1).toFixed(2)}$/월</h1>
+          <Button style={{ backgroundColor: '#ff9900' }} onClick={() => { void update() }}>{isLoading ? '수정중.' : (isIpChange ? '수정 후 재시작' : '수정')}</Button>
+        </Bottom>
+      </Form>
     </Modal>
   )
 }
