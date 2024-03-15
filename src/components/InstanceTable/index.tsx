@@ -34,7 +34,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
     memo: ''
   })
 
-  async function deleteInstance (uuid: string): Promise<void> {
+  async function deleteInstance(uuid: string): Promise<void> {
     if (confirm('정말 삭제 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}`, {
         method: 'DELETE'
@@ -45,7 +45,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
     }
   }
 
-  async function restartInstance (uuid: string): Promise<void> {
+  async function restartInstance(uuid: string): Promise<void> {
     if (confirm('정말 재시작 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}/restart`, {
         method: 'POST'
@@ -56,7 +56,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
     }
   }
 
-  async function resetInstance (uuid: string): Promise<void> {
+  async function resetInstance(uuid: string): Promise<void> {
     if (confirm('정말 초기화 하시겠습니까?')) {
       await axios(`/api/instances/${uuid}/reset`, {
         method: 'POST'
@@ -67,7 +67,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
     }
   }
 
-  async function downloadKeypair (uuid: string, name: string): Promise<void> {
+  async function downloadKeypair(uuid: string, name: string): Promise<void> {
     await axios(`/api/instances/${uuid}/keypair`, {
       method: 'GET'
     }).then((res) => {
@@ -83,7 +83,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
       .catch((err) => { console.error(err) })
   }
 
-  async function updateForm (uuid: string): Promise<void> {
+  async function updateForm(uuid: string): Promise<void> {
     if (isUpdateLoading)
       return
 
@@ -99,7 +99,8 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
       dispatch({ type: 'setOwner', owner: res.data.body.owner })
       dispatch({ type: 'setName', name: res.data.body.name })
       dispatch({ type: 'setMemo', memo: res.data.body.memo })
-      dispatch({ type: 'setPorts', ports: res.data.body.ports.split(',') })
+      const split_ports = res.data.body.ports.split(',') as string[]
+      dispatch({ type: 'setPorts', ports: split_ports.map((value) => ({ label: value, value })) })
       setUpdateModal(true)
     }).catch((err) => {
       console.error(err)
@@ -108,7 +109,7 @@ const InstanceTable: FC<Props> = ({ instances, isLoading }) => {
     setIsUpdateLoading(false)
   }
 
-  async function inviteInstance (uuid: string): Promise<void> {
+  async function inviteInstance(uuid: string): Promise<void> {
     if (isInviteLoading) return
     setIsInviteLoading(true)
 
